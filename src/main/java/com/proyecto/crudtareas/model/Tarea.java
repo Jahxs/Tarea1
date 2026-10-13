@@ -1,0 +1,81 @@
+package com.proyecto.crudtareas.model;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Column;
+
+/**
+ * Entidad Tarea: Representa la tabla "tareas" en PostgreSQL.
+ */
+@Entity
+@Table(name = "tareas")
+public class Tarea {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, length = 150)
+    private String titulo;
+
+    @Column(length = 500)
+    private String descripcion;
+
+    @Column(nullable = false, length = 50)
+    private String estado; // Ejemplo: PENDIENTE, EN_PROCESO, COMPLETADA
+
+    // Constructor vacío requerido por JPA/Hibernate
+    public Tarea() {
+    }
+
+    // Constructor completo
+    public Tarea(Long id, String titulo, String descripcion, String estado) {
+        this.id = id;
+        this.titulo = titulo;
+        this.descripcion = descripcion;
+        this.estado = estado;
+    }
+
+    // Constructor de conveniencia (sin ID, ya que es autogenerado por la BD)
+    public Tarea(String titulo, String descripcion, String estado) {
+        this.titulo = titulo;
+        this.descripcion = descripcion;
+        this.estado = estado;
+    }
+
+    // Getters y Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+}

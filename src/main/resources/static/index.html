@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de Tareas | CRUD Spring Boot</title>
+    <!-- Fuente moderna Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Hoja de estilos -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Encabezado principal -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="badge-status">
+                    <span class="status-dot"></span>
+                    <span>API REST Conectada</span>
+                </div>
+                <h1>Panel de Gestión de Tareas</h1>
+                <p>Integración de Frontend con Backend Java Spring Boot & PostgreSQL</p>
+            </div>
+        </header>
+
+        <!-- Contenedor principal con dos columnas (Formulario y Tabla) -->
+        <main class="main-content">
+            <!-- Columna izquierda: Formulario de creación / edición -->
+            <section class="card form-card">
+                <div class="card-header">
+                    <h2 id="form-titulo">Nueva Tarea</h2>
+                    <span class="card-subtitle">Completa los campos para registrar o actualizar</span>
+                </div>
+
+                <form id="tarea-form" class="tarea-form">
+                    <!-- Campo oculto para el ID (se usa cuando estamos editando una tarea existente) -->
+                    <input type="hidden" id="tarea-id">
+
+                    <div class="form-group">
+                        <label for="titulo">Título de la tarea <span class="required">*</span></label>
+                        <input 
+                            type="text" 
+                            id="titulo" 
+                            name="titulo" 
+                            placeholder="Ej. Revisar documentación de JPA" 
+                            required 
+                            maxlength="150"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="descripcion">Descripción</label>
+                        <textarea 
+                            id="descripcion" 
+                            name="descripcion" 
+                            rows="3" 
+                            placeholder="Detalles adicionales sobre la tarea..."
+                            maxlength="500"
+                        ></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="estado">Estado <span class="required">*</span></label>
+                        <select id="estado" name="estado" required>
+                            <option value="PENDIENTE">⏳ Pendiente</option>
+                            <option value="EN_PROCESO">🔄 En Proceso</option>
+                            <option value="COMPLETADA">✅ Completada</option>
+                        </select>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" id="btn-guardar" class="btn btn-primary">
+                            <span class="btn-icon">💾</span>
+                            <span id="btn-texto">Guardar Tarea</span>
+                        </button>
+                        <button type="button" id="btn-cancelar" class="btn btn-secondary" style="display: none;">
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Columna derecha: Tabla de tareas -->
+            <section class="card table-card">
+                <div class="card-header table-header-flex">
+                    <div>
+                        <h2>Listado de Tareas</h2>
+                        <span class="card-subtitle" id="contador-tareas">Cargando registros...</span>
+                    </div>
+                    <button id="btn-recargar" class="btn btn-sm btn-outline" title="Recargar lista">
+                        🔄 Actualizar
+                    </button>
+                </div>
+
+                <!-- Notificación de estado/mensajes -->
+                <div id="toast-notificacion" class="toast" style="display: none;"></div>
+
+                <!-- Tabla de datos -->
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 60px;">ID</th>
+                                <th>Título</th>
+                                <th>Descripción</th>
+                                <th style="width: 140px;">Estado</th>
+                                <th style="width: 130px; text-align: center;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-tareas-body">
+                            <!-- Las filas se insertan dinámicamente mediante JavaScript (fetch) -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Estado vacío cuando no hay registros -->
+                <div id="mensaje-vacio" class="empty-state" style="display: none;">
+                    <div class="empty-icon">📝</div>
+                    <h3>No hay tareas registradas</h3>
+                    <p>Crea tu primera tarea usando el formulario de la izquierda.</p>
+                </div>
+            </section>
+        </main>
+
+        <!-- Pie de página informativo -->
+        <footer class="app-footer">
+            <p>Arquitectura: <strong>Vanilla JS + Fetch API</strong> &bull; <strong>Spring Boot 3</strong> &bull; <strong>PostgreSQL</strong></p>
+        </footer>
+    </div>
+
+    <!-- Script de lógica e integración con la API REST -->
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,136 +1,489 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestor de Tareas | CRUD Spring Boot</title>
-    <!-- Fuente moderna Google Fonts -->
+    <title>TaskHub Pro | Gestor de Tareas CRUD - Spring Boot & PostgreSQL</title>
+    
+    <!-- Script preventivo anti-parpadeo de tema (FOUC) -->
+    <script>
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+
+    <!-- Google Fonts: Plus Jakarta Sans & Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Hoja de estilos -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            400: '#818cf8',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- FontAwesome Icons (CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <!-- Hoja de estilos personalizada: Media Queries nativas, Grid, Flexbox y Glassmorphism -->
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-    <div class="app-container">
-        <!-- Encabezado principal -->
-        <header class="app-header">
-            <div class="header-content">
-                <div class="badge-status">
-                    <span class="status-dot"></span>
-                    <span>API REST Conectada</span>
+<body class="min-h-full ambient-glow-light dark:ambient-glow-dark text-slate-800 dark:text-slate-100 font-sans antialiased selection:bg-indigo-500 selection:text-white flex flex-col transition-colors duration-300">
+
+    <!-- Navbar superior con efecto Glassmorphism -->
+    <header class="sticky top-0 z-30 backdrop-blur-xl bg-white/75 dark:bg-slate-900/75 border-b border-slate-200/80 dark:border-slate-800/80 shadow-sm transition-all duration-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 sm:h-20 gap-4">
+                
+                <!-- Logo & Título -->
+                <div class="flex items-center gap-3.5">
+                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-indigo-500/25 ring-1 ring-white/30 transform hover:scale-105 transition-transform">
+                        <i class="fa-solid fa-layer-group text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h1 class="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">TaskHub<span class="text-indigo-600 dark:text-indigo-400">.</span></h1>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/20">
+                                PRO CRUD
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">Spring Boot 3 &bull; PostgreSQL &bull; Vanilla JS &bull; Tailwind &bull; Grid/Flexbox</p>
+                    </div>
                 </div>
-                <h1>Panel de Gestión de Tareas</h1>
-                <p>Integración de Frontend con Backend Java Spring Boot & PostgreSQL</p>
+
+                <!-- Acciones Rápidas del Navbar -->
+                <div class="flex items-center gap-2.5 sm:gap-3.5">
+                    
+                    <!-- Botón Toggle Modo Claro / Oscuro con animación de icono -->
+                    <button 
+                        id="btn-theme-toggle" 
+                        type="button" 
+                        class="p-2 sm:px-3 sm:py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-all flex items-center gap-2 text-xs font-semibold cursor-pointer shadow-sm active:scale-95"
+                        title="Cambiar tema claro/oscuro (Alt + T)"
+                        aria-label="Alternar tema"
+                    >
+                        <i id="theme-toggle-icon" class="fa-solid fa-moon text-indigo-600 dark:text-amber-400 text-sm transition-transform duration-300"></i>
+                        <span id="theme-toggle-text" class="hidden md:inline">Modo Oscuro</span>
+                    </button>
+
+                    <!-- Estado del Backend (Spring Boot + PostgreSQL) -->
+                    <div id="backend-status-badge" class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 status-pulse"></span>
+                        <span id="backend-status-text">PostgreSQL Activo</span>
+                    </div>
+
+                    <!-- Botón Crear Nueva Tarea -->
+                    <button 
+                        id="btn-nueva-tarea" 
+                        type="button"
+                        class="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl font-semibold text-sm text-white bg-gradient-to-r from-indigo-600 via-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-600 active:scale-95 shadow-md shadow-indigo-600/30 transition-all duration-200 cursor-pointer"
+                    >
+                        <i class="fa-solid fa-plus text-xs"></i>
+                        <span>Nueva Tarea</span>
+                    </button>
+                </div>
+
             </div>
-        </header>
+        </div>
+    </header>
 
-        <!-- Contenedor principal con dos columnas (Formulario y Tabla) -->
-        <main class="main-content">
-            <!-- Columna izquierda: Formulario de creación / edición -->
-            <section class="card form-card">
-                <div class="card-header">
-                    <h2 id="form-titulo">Nueva Tarea</h2>
-                    <span class="card-subtitle">Completa los campos para registrar o actualizar</span>
+    <!-- Contenido Principal -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-6 sm:space-y-8">
+        
+        <!-- Panel de Estadísticas y Métricas KPI (4 Micro-tarjetas interactivas) -->
+        <section class="stats-dashboard grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-5" aria-label="Métricas de Tareas">
+            
+            <!-- Card 1: Total -->
+            <div data-filtro="TODOS" class="cursor-pointer metric-card bg-white/80 dark:bg-slate-900/80 backdrop-blur-md rounded-2xl border border-slate-200/90 dark:border-slate-800/80 p-4 sm:p-5 shadow-sm hover:shadow-md hover:border-indigo-400/50 transition-all group">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Total Tareas</span>
+                    <div class="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-sm group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-list-check"></i>
+                    </div>
+                </div>
+                <div class="mt-3 flex items-baseline justify-between">
+                    <span id="kpi-total" class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">0</span>
+                    <span class="text-[11px] font-medium text-slate-400 dark:text-slate-500">100% base</span>
+                </div>
+                <div class="mt-2 text-[11px] text-slate-500 dark:text-slate-400">Clic para ver todas</div>
+            </div>
+
+            <!-- Card 2: Pendientes -->
+            <div data-filtro="PENDIENTE" class="cursor-pointer metric-card bg-white/80 dark:bg-slate-900/80 backdrop-blur-md rounded-2xl border border-slate-200/90 dark:border-slate-800/80 p-4 sm:p-5 shadow-sm hover:shadow-md hover:border-amber-400/50 transition-all group">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Pendientes</span>
+                    <div class="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center text-sm group-hover:scale-110 transition-transform">
+                        <i class="fa-regular fa-clock"></i>
+                    </div>
+                </div>
+                <div class="mt-3 flex items-baseline justify-between">
+                    <span id="kpi-pendientes" class="text-2xl sm:text-3xl font-extrabold text-amber-600 dark:text-amber-400">0</span>
+                    <span id="kpi-pendientes-pct" class="text-[11px] font-semibold text-amber-600 dark:text-amber-400">0%</span>
+                </div>
+                <div class="mt-2 text-[11px] text-slate-500 dark:text-slate-400">Por iniciar</div>
+            </div>
+
+            <!-- Card 3: En Proceso -->
+            <div data-filtro="EN_PROCESO" class="cursor-pointer metric-card bg-white/80 dark:bg-slate-900/80 backdrop-blur-md rounded-2xl border border-slate-200/90 dark:border-slate-800/80 p-4 sm:p-5 shadow-sm hover:shadow-md hover:border-blue-400/50 transition-all group">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">En Proceso</span>
+                    <div class="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-spinner animate-spin"></i>
+                    </div>
+                </div>
+                <div class="mt-3 flex items-baseline justify-between">
+                    <span id="kpi-proceso" class="text-2xl sm:text-3xl font-extrabold text-blue-600 dark:text-blue-400">0</span>
+                    <span id="kpi-proceso-pct" class="text-[11px] font-semibold text-blue-600 dark:text-blue-400">0%</span>
+                </div>
+                <div class="mt-2 text-[11px] text-slate-500 dark:text-slate-400">En desarrollo</div>
+            </div>
+
+            <!-- Card 4: Completadas -->
+            <div data-filtro="COMPLETADA" class="cursor-pointer metric-card bg-white/80 dark:bg-slate-900/80 backdrop-blur-md rounded-2xl border border-slate-200/90 dark:border-slate-800/80 p-4 sm:p-5 shadow-sm hover:shadow-md hover:border-emerald-400/50 transition-all group">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Completadas</span>
+                    <div class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+                </div>
+                <div class="mt-3 flex items-baseline justify-between">
+                    <span id="kpi-completadas" class="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">0</span>
+                    <span id="kpi-completadas-pct" class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">0%</span>
+                </div>
+                <div class="mt-2 text-[11px] text-slate-500 dark:text-slate-400">Finalizadas con éxito</div>
+            </div>
+
+        </section>
+
+        <!-- Barra de Control: Búsqueda Instantánea ("realtime") y Filtros -->
+        <section class="bg-white/85 dark:bg-slate-900/85 rounded-2xl border border-slate-200/90 dark:border-slate-800/80 p-4 sm:p-6 shadow-sm dark:shadow-xl backdrop-blur-md space-y-4 transition-colors duration-200">
+            
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                
+                <!-- Input de búsqueda instantánea (realtime como en la pizarra) -->
+                <div class="relative flex-1">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                    </div>
+                    <input 
+                        type="text" 
+                        id="input-busqueda" 
+                        placeholder="Buscar tareas en tiempo real por título, descripción o ID... (Presiona / para buscar)" 
+                        class="w-full pl-10 pr-24 py-3 rounded-xl bg-slate-50/80 dark:bg-slate-950/70 border border-slate-300/80 dark:border-slate-700/70 text-slate-900 dark:text-slate-100 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all shadow-inner"
+                        autocomplete="off"
+                    >
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center gap-1.5">
+                        <button 
+                            id="btn-limpiar-busqueda" 
+                            type="button" 
+                            class="hidden p-1 text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors"
+                            title="Limpiar búsqueda"
+                        >
+                            <i class="fa-solid fa-xmark text-sm"></i>
+                        </button>
+                        <kbd class="hidden sm:inline-block px-2 py-0.5 text-[10px] font-mono text-slate-400 bg-slate-200/60 dark:bg-slate-800 rounded border border-slate-300 dark:border-slate-700">
+                            /
+                        </kbd>
+                    </div>
                 </div>
 
-                <form id="tarea-form" class="tarea-form">
-                    <!-- Campo oculto para el ID (se usa cuando estamos editando una tarea existente) -->
+                <!-- Botones de Filtrado por Estado (Flexbox) -->
+                <div class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none text-xs font-semibold">
+                    <button type="button" data-filtro="TODOS" class="btn-filtro active px-3.5 py-2.5 rounded-xl bg-indigo-600 text-white transition-all shadow-sm">
+                        Todos <span id="badge-total" class="ml-1 opacity-80">(0)</span>
+                    </button>
+                    <button type="button" data-filtro="PENDIENTE" class="btn-filtro px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700/80 dark:hover:text-white transition-all">
+                        Pendientes <span id="badge-pendientes" class="ml-1 opacity-70">(0)</span>
+                    </button>
+                    <button type="button" data-filtro="EN_PROCESO" class="btn-filtro px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700/80 dark:hover:text-white transition-all">
+                        En Proceso <span id="badge-proceso" class="ml-1 opacity-70">(0)</span>
+                    </button>
+                    <button type="button" data-filtro="COMPLETADA" class="btn-filtro px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700/80 dark:hover:text-white transition-all">
+                        Completadas <span id="badge-completadas" class="ml-1 opacity-70">(0)</span>
+                    </button>
+                    <button id="btn-recargar" type="button" class="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-700/80 transition-all" title="Recargar lista">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Resumen y opciones de ordenamiento -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-200/80 dark:border-slate-800/60 gap-2">
+                <span id="texto-conteo-resultados">Cargando tareas desde Spring Boot...</span>
+                <div class="flex items-center gap-3">
+                    <span id="indicador-realtime" class="inline-flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400 font-medium">
+                        <i class="fa-solid fa-bolt text-[10px]"></i> Filtro Instantáneo
+                    </span>
+                    <span class="text-slate-300 dark:text-slate-700 hidden sm:inline">&bull;</span>
+                    <div class="flex items-center gap-1.5">
+                        <label for="select-orden" class="text-slate-400">Ordenar:</label>
+                        <select id="select-orden" class="bg-transparent text-slate-700 dark:text-slate-300 font-medium focus:outline-none cursor-pointer">
+                            <option value="recientes" class="dark:bg-slate-900">Más recientes</option>
+                            <option value="antiguos" class="dark:bg-slate-900">Más antiguos</option>
+                            <option value="az" class="dark:bg-slate-900">Título (A-Z)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Contenedor del Grid de Tarjetas (CSS Grid / Flexbox + Media Queries responsivas como en la pizarra) -->
+        <section aria-label="Listado de Tareas">
+            
+            <!-- Spinner de Carga -->
+            <div id="loading-spinner" class="py-20 flex flex-col items-center justify-center space-y-4">
+                <div class="w-12 h-12 border-4 border-indigo-500/20 border-t-indigo-600 dark:border-t-indigo-500 rounded-full animate-spin"></div>
+                <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Conectando con la base de datos PostgreSQL...</p>
+            </div>
+
+            <!-- Estado Vacío (Sin tareas o sin resultados de búsqueda) -->
+            <div id="estado-vacio" class="hidden py-16 px-4 text-center rounded-3xl border-2 border-dashed border-slate-300 dark:border-slate-800 bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center text-slate-400 text-2xl shadow-inner">
+                    <i class="fa-regular fa-folder-open"></i>
+                </div>
+                <h3 id="vacio-titulo" class="text-lg font-bold text-slate-900 dark:text-white mb-1">No hay tareas que mostrar</h3>
+                <p id="vacio-subtitulo" class="text-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-6">
+                    Aún no has registrado ninguna tarea o ninguna coincide con tu búsqueda.
+                </p>
+                <button 
+                    id="btn-vacio-crear" 
+                    type="button" 
+                    class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-all shadow-md shadow-indigo-600/20 active:scale-95 cursor-pointer"
+                >
+                    <i class="fa-solid fa-plus text-xs"></i> Crear primera tarea
+                </button>
+            </div>
+
+            <!-- Grid Responsivo de Tarjetas:
+                 Mobile (Media query < 640px): 1 columna
+                 Tablet (sm: >= 640px): 2 columnas
+                 Desktop (lg: >= 1024px): 3 columnas
+                 Desktop Grande (xl: >= 1280px): 4 columnas
+            -->
+            <div id="grid-tareas" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                <!-- Las tarjetas se generan dinámicamente con JavaScript -->
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Modal: Detalle de Tarea (Como indica la flecha en la pizarra que va de la tarjeta al documento) -->
+    <div id="modal-detalle" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true">
+        <!-- Backdrop difuminado -->
+        <div class="fixed inset-0 bg-slate-950/70 backdrop-blur-md transition-opacity" id="backdrop-detalle"></div>
+
+        <div class="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20 flex items-center justify-center">
+            <div class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl max-w-lg w-full p-6 sm:p-8 space-y-6 text-slate-800 dark:text-slate-100 transform transition-all animate-in fade-in zoom-in-95">
+                
+                <!-- Encabezado del Detalle -->
+                <div class="flex items-start justify-between gap-4 border-b border-slate-100 dark:border-slate-800/80 pb-4">
+                    <div class="space-y-1.5">
+                        <div class="flex items-center gap-2">
+                            <span id="detalle-id-badge" class="px-2.5 py-0.5 rounded-lg text-xs font-mono font-bold bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/20">
+                                ID: #--
+                            </span>
+                            <span id="detalle-estado-badge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold">
+                                Pendiente
+                            </span>
+                        </div>
+                        <h2 id="detalle-titulo" class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white break-words mt-1">Título de la Tarea</h2>
+                    </div>
+                    <button type="button" id="btn-cerrar-detalle" class="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Cerrar">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Cuerpo del Detalle -->
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Descripción completa</h3>
+                            <button id="btn-copiar-descripcion" type="button" class="text-[11px] text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
+                                <i class="fa-regular fa-copy"></i> Copiar
+                            </button>
+                        </div>
+                        <div id="detalle-descripcion" class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800/80 text-sm text-slate-700 dark:text-slate-200 whitespace-pre-wrap leading-relaxed min-h-[110px] shadow-inner">
+                            Sin descripción.
+                        </div>
+                    </div>
+
+                    <!-- Datos Técnicos -->
+                    <div class="grid grid-cols-2 gap-3 pt-2 text-xs">
+                        <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800">
+                            <span class="text-slate-400 block mb-1">Estado de Ejecución:</span>
+                            <span id="detalle-estado-texto" class="font-bold text-slate-800 dark:text-slate-200 text-sm">PENDIENTE</span>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800">
+                            <span class="text-slate-400 block mb-1">Persistencia Backend:</span>
+                            <span class="font-bold text-slate-800 dark:text-slate-200 text-sm">PostgreSQL JPA</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones de Acción dentro del Detalle -->
+                <div class="flex flex-col sm:flex-row items-center justify-end gap-2.5 pt-4 border-t border-slate-100 dark:border-slate-800/80">
+                    <button 
+                        type="button" 
+                        id="btn-detalle-eliminar"
+                        class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-rose-600 dark:text-rose-400 hover:text-white hover:bg-rose-600 dark:hover:bg-rose-600 border border-rose-200 dark:border-rose-500/20 transition-all cursor-pointer"
+                    >
+                        <i class="fa-regular fa-trash-can"></i>
+                        <span>Eliminar Tarea</span>
+                    </button>
+                    <button 
+                        type="button" 
+                        id="btn-detalle-editar"
+                        class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 active:scale-95 transition-all shadow-md shadow-indigo-600/25 cursor-pointer"
+                    >
+                        <i class="fa-regular fa-pen-to-square"></i>
+                        <span>Editar Tarea</span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Formulario para Crear / Editar Tarea -->
+    <div id="modal-form" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-slate-950/70 backdrop-blur-md transition-opacity" id="backdrop-form"></div>
+
+        <div class="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20 flex items-center justify-center">
+            <div class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl max-w-lg w-full p-6 sm:p-8 space-y-6 text-slate-800 dark:text-slate-100 transform transition-all">
+                
+                <!-- Encabezado del Formulario -->
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-4">
+                    <div>
+                        <h2 id="modal-form-titulo" class="text-xl font-bold text-slate-900 dark:text-white">Nueva Tarea</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Completa los campos para persistir en PostgreSQL.</p>
+                    </div>
+                    <button type="button" id="btn-cerrar-form" class="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Formulario -->
+                <form id="tarea-form" class="space-y-4">
                     <input type="hidden" id="tarea-id">
 
-                    <div class="form-group">
-                        <label for="titulo">Título de la tarea <span class="required">*</span></label>
+                    <!-- Campo: Título -->
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label for="titulo" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                                Título <span class="text-rose-500">*</span>
+                            </label>
+                            <span id="char-titulo" class="text-[10px] text-slate-400 font-mono">0/150</span>
+                        </div>
                         <input 
                             type="text" 
                             id="titulo" 
                             name="titulo" 
-                            placeholder="Ej. Revisar documentación de JPA" 
+                            placeholder="Ej. Integrar endpoints con Fetch API" 
                             required 
                             maxlength="150"
+                            class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all shadow-inner"
                         >
                     </div>
 
-                    <div class="form-group">
-                        <label for="descripcion">Descripción</label>
+                    <!-- Campo: Descripción -->
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label for="descripcion" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                                Descripción
+                            </label>
+                            <span id="char-descripcion" class="text-[10px] text-slate-400 font-mono">0/500</span>
+                        </div>
                         <textarea 
                             id="descripcion" 
                             name="descripcion" 
-                            rows="3" 
-                            placeholder="Detalles adicionales sobre la tarea..."
+                            rows="4" 
+                            placeholder="Añade detalles técnicos, notas o criterios de aceptación..."
                             maxlength="500"
+                            class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all resize-none shadow-inner"
                         ></textarea>
                     </div>
 
-                    <div class="form-group">
-                        <label for="estado">Estado <span class="required">*</span></label>
-                        <select id="estado" name="estado" required>
+                    <!-- Campo: Estado -->
+                    <div>
+                        <label for="estado" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+                            Estado <span class="text-rose-500">*</span>
+                        </label>
+                        <select 
+                            id="estado" 
+                            name="estado" 
+                            required
+                            class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all cursor-pointer shadow-inner font-medium"
+                        >
                             <option value="PENDIENTE">⏳ Pendiente</option>
                             <option value="EN_PROCESO">🔄 En Proceso</option>
                             <option value="COMPLETADA">✅ Completada</option>
                         </select>
                     </div>
 
-                    <div class="form-actions">
-                        <button type="submit" id="btn-guardar" class="btn btn-primary">
-                            <span class="btn-icon">💾</span>
-                            <span id="btn-texto">Guardar Tarea</span>
-                        </button>
-                        <button type="button" id="btn-cancelar" class="btn btn-secondary" style="display: none;">
+                    <!-- Botones de Acción del Formulario -->
+                    <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800/80">
+                        <button 
+                            type="button" 
+                            id="btn-cancelar-form" 
+                            class="px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer"
+                        >
                             Cancelar
+                        </button>
+                        <button 
+                            type="submit" 
+                            id="btn-submit-form" 
+                            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 active:scale-95 transition-all shadow-md shadow-indigo-600/30 cursor-pointer"
+                        >
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            <span id="btn-submit-texto">Guardar Tarea</span>
                         </button>
                     </div>
                 </form>
-            </section>
 
-            <!-- Columna derecha: Tabla de tareas -->
-            <section class="card table-card">
-                <div class="card-header table-header-flex">
-                    <div>
-                        <h2>Listado de Tareas</h2>
-                        <span class="card-subtitle" id="contador-tareas">Cargando registros...</span>
-                    </div>
-                    <button id="btn-recargar" class="btn btn-sm btn-outline" title="Recargar lista">
-                        🔄 Actualizar
-                    </button>
-                </div>
-
-                <!-- Notificación de estado/mensajes -->
-                <div id="toast-notificacion" class="toast" style="display: none;"></div>
-
-                <!-- Tabla de datos -->
-                <div class="table-responsive">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th style="width: 60px;">ID</th>
-                                <th>Título</th>
-                                <th>Descripción</th>
-                                <th style="width: 140px;">Estado</th>
-                                <th style="width: 130px; text-align: center;">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabla-tareas-body">
-                            <!-- Las filas se insertan dinámicamente mediante JavaScript (fetch) -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Estado vacío cuando no hay registros -->
-                <div id="mensaje-vacio" class="empty-state" style="display: none;">
-                    <div class="empty-icon">📝</div>
-                    <h3>No hay tareas registradas</h3>
-                    <p>Crea tu primera tarea usando el formulario de la izquierda.</p>
-                </div>
-            </section>
-        </main>
-
-        <!-- Pie de página informativo -->
-        <footer class="app-footer">
-            <p>Arquitectura: <strong>Vanilla JS + Fetch API</strong> &bull; <strong>Spring Boot 3</strong> &bull; <strong>PostgreSQL</strong></p>
-        </footer>
+            </div>
+        </div>
     </div>
 
-    <!-- Script de lógica e integración con la API REST -->
+    <!-- Toast de Notificaciones Flotante -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2.5 pointer-events-none max-w-sm w-full px-4"></div>
+
+    <!-- Footer con créditos técnicos -->
+    <footer class="mt-auto border-t border-slate-200/80 dark:border-slate-800/80 bg-white/70 dark:bg-slate-950/80 backdrop-blur-md py-6 text-center text-xs text-slate-500 transition-colors duration-200">
+        <p>
+            Arquitectura: 
+            <span class="text-slate-700 dark:text-slate-300 font-semibold">Spring Boot 3 + PostgreSQL</span> 
+            &bull; Front-End: 
+            <span class="text-slate-700 dark:text-slate-300 font-semibold">Vanilla JS + Tailwind CSS + Grid/Flexbox</span>
+        </p>
+    </footer>
+
+    <!-- Lógica de la aplicación con Vanilla JS -->
     <script src="app.js"></script>
 </body>
 </html>

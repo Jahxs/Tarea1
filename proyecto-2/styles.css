@@ -1,0 +1,201 @@
+/* ==========================================================================
+   PROYECTO 2 - ESTILOS PERSONALIZADOS
+   Vanilla JS | Rick & Morty (3 Endpoints) | PokéAPI (2 Endpoints)
+   Tabla Contenida en Viewport | Animación de Carga 4s | Tema Sci-Fi / Cyber
+   ========================================================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-attachment: fixed;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    min-height: 100vh;
+}
+
+/* --------------------------------------------------------------------------
+   1. FONDOS AMBIENTALES DINÁMICOS (PORTAL SCI-FI & CYBER)
+   -------------------------------------------------------------------------- */
+.ambient-bg {
+    background-color: #f8fafc;
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.12) 0px, transparent 50%),
+        radial-gradient(at 100% 5%, rgba(6, 182, 212, 0.12) 0px, transparent 45%),
+        radial-gradient(at 50% 50%, rgba(241, 245, 249, 0.7) 0px, transparent 100%),
+        radial-gradient(at 85% 95%, rgba(99, 102, 241, 0.10) 0px, transparent 50%);
+    background-attachment: fixed;
+}
+
+.dark .ambient-bg {
+    background-color: #070d17;
+    background-image: 
+        radial-gradient(at 5% 5%, rgba(16, 185, 129, 0.22) 0px, transparent 45%),
+        radial-gradient(at 95% 5%, rgba(6, 182, 212, 0.20) 0px, transparent 45%),
+        radial-gradient(at 50% 50%, rgba(15, 23, 42, 0.95) 0px, transparent 100%),
+        radial-gradient(at 85% 95%, rgba(99, 102, 241, 0.15) 0px, transparent 50%);
+    background-attachment: fixed;
+}
+
+/* --------------------------------------------------------------------------
+   2. HERO BANNER Y COMANDOS DE BÚSQUEDA
+   -------------------------------------------------------------------------- */
+.hero-banner {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(241, 245, 249, 0.9));
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    box-shadow: 0 10px 25px -10px rgba(16, 185, 129, 0.12);
+    backdrop-filter: blur(12px);
+}
+
+.dark .hero-banner {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(17, 24, 39, 0.85));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.search-command-card {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1.5px solid rgba(226, 232, 240, 0.95);
+    box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.08);
+    backdrop-filter: blur(14px);
+    transition: all 0.25s ease;
+}
+
+.dark .search-command-card {
+    background: rgba(15, 23, 42, 0.85);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 14px 35px -10px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* --------------------------------------------------------------------------
+   3. TARJETAS DE ENTIDADES (IMAGEN Y DESCRIPCIÓN)
+   -------------------------------------------------------------------------- */
+.entity-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 1.35rem;
+    overflow: hidden;
+    transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 2px 6px -1px rgba(0, 0, 0, 0.04);
+    cursor: pointer;
+}
+
+.entity-card:hover {
+    transform: translateY(-6px);
+    border-color: #6ee7b7;
+    box-shadow: 0 18px 30px -10px rgba(16, 185, 129, 0.25);
+}
+
+.dark .entity-card {
+    background: rgba(17, 24, 39, 0.88);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.dark .entity-card:hover {
+    border-color: rgba(16, 185, 129, 0.6);
+    box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.entity-image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    background: #f1f5f9;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dark .entity-image-wrapper {
+    background: #0b1120;
+}
+
+.entity-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s ease;
+}
+
+.entity-card:hover .entity-image {
+    transform: scale(1.08);
+}
+
+/* --------------------------------------------------------------------------
+   4. TABLA CONTENIDA QUE NO SE SALE DE LA VISTA
+   -------------------------------------------------------------------------- */
+.contained-table-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    max-width: 100%;
+    width: 100%;
+    box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.05);
+}
+
+.dark .contained-table-card {
+    background: rgba(15, 23, 42, 0.9);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+}
+
+.table-scroll-wrapper {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}
+
+.dark .table-scroll-wrapper {
+    scrollbar-color: #334155 transparent;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 9999px;
+}
+
+.dark .table-scroll-wrapper::-webkit-scrollbar-thumb {
+    background: #334155;
+}
+
+/* Asegurar que el texto largo se trunque con puntos suspensivos sin desbordar */
+.table-truncate {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* --------------------------------------------------------------------------
+   5. ANIMACIONES
+   -------------------------------------------------------------------------- */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.99);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

@@ -110,137 +110,232 @@
     </header>
 
     <!-- Contenido Principal -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-6 sm:space-y-8">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
         
-        <!-- Panel de Estadísticas y Métricas KPI (4 Micro-tarjetas interactivas) -->
+        <!-- Hero Banner: Espacio de Trabajo Profesional con Estadísticas Rápidas -->
+        <section class="hero-card rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div class="space-y-2.5 max-w-2xl">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
+                    <span class="w-2 h-2 rounded-full bg-indigo-500 status-pulse"></span>
+                    <span id="hero-greeting">Workspace de Gestión y Control CRUD</span>
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
+                    Tablero Integral de Tareas y Procesos
+                </h2>
+                <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Visualiza y administra tus tareas con persistencia en tiempo real en PostgreSQL. Conmuta entre vista de Tarjetas responsivas, Tablero Kanban o Tabla compacta.
+                </p>
+                <div class="flex flex-wrap items-center gap-2 pt-1 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 shadow-xs">
+                        <i class="fa-solid fa-server text-emerald-500"></i> Spring Boot 3.3
+                    </span>
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 shadow-xs">
+                        <i class="fa-solid fa-database text-blue-500"></i> PostgreSQL 18
+                    </span>
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 shadow-xs">
+                        <i class="fa-brands fa-js text-amber-500"></i> Vanilla JavaScript
+                    </span>
+                </div>
+            </div>
+            
+            <!-- Acciones Principales del Hero -->
+            <div class="flex flex-wrap sm:flex-col lg:flex-row gap-2.5 w-full md:w-auto">
+                <button 
+                    id="btn-hero-crear" 
+                    type="button" 
+                    class="btn-glow flex-1 md:flex-initial inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl font-bold text-sm text-white bg-gradient-to-r from-indigo-600 via-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-600 active:scale-95 shadow-lg shadow-indigo-600/30 transition-all cursor-pointer"
+                >
+                    <i class="fa-solid fa-plus text-xs"></i>
+                    <span>Nueva Tarea</span>
+                </button>
+                <button 
+                    id="btn-demo-data" 
+                    type="button" 
+                    class="flex-1 md:flex-initial inline-flex items-center justify-center gap-2 px-4 py-3 rounded-2xl font-semibold text-xs text-slate-700 dark:text-slate-200 bg-white/90 dark:bg-slate-800/90 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer shadow-sm"
+                    title="Insertar tarea de prueba en PostgreSQL"
+                >
+                    <i class="fa-solid fa-wand-magic-sparkles text-indigo-500"></i>
+                    <span>+ Demo</span>
+                </button>
+                <button 
+                    id="btn-exportar-json" 
+                    type="button" 
+                    class="inline-flex items-center justify-center p-3 rounded-2xl text-slate-600 dark:text-slate-300 bg-white/90 dark:bg-slate-800/90 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-all cursor-pointer shadow-sm"
+                    title="Descargar copia de respaldo en JSON"
+                >
+                    <i class="fa-solid fa-file-arrow-down"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Panel de Estadísticas y Métricas KPI con Barras de Progreso Dinámicas -->
         <section class="stats-dashboard grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-5" aria-label="Métricas de Tareas">
             
             <!-- Card 1: Total -->
-            <div data-filtro="TODOS" class="cursor-pointer metric-card bg-white/80 dark:bg-slate-900/80 backdrop-blur-md rounded-2xl border border-slate-200/90 dark:border-slate-800/80 p-4 sm:p-5 shadow-sm hover:shadow-md hover:border-indigo-400/50 transition-all group">
+            <div data-filtro="TODOS" class="cursor-pointer metric-card bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl border border-slate-200/90 dark:border-slate-800/80 p-4 sm:p-5 shadow-sm hover:border-indigo-400/50 transition-all group">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Total Tareas</span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Total Tareas</span>
                     <div class="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-sm group-hover:scale-110 transition-transform">
                         <i class="fa-solid fa-list-check"></i>
                     </div>
                 </div>
                 <div class="mt-3 flex items-baseline justify-between">
                     <span id="kpi-total" class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">0</span>
-                    <span class="text-[11px] font-medium text-slate-400 dark:text-slate-500">100% base</span>
+                    <span class="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400">100% total</span>
                 </div>
-                <div class="mt-2 text-[11px] text-slate-500 dark:text-slate-400">Clic para ver todas</div>
+                <div class="kpi-bar-bg mt-3">
+                    <div id="kpi-total-bar" class="kpi-bar-fill bg-indigo-600 dark:bg-indigo-500" style="width: 100%;"></div>
+                </div>
+                <div class="mt-2 text-[10px] text-slate-400 dark:text-slate-500">Clic para ver todas</div>
             </div>
 
             <!-- Card 2: Pendientes -->
-            <div data-filtro="PENDIENTE" class="cursor-pointer metric-card bg-white/80 dark:bg-slate-900/80 backdrop-blur-md rounded-2xl border border-slate-200/90 dark:border-slate-800/80 p-4 sm:p-5 shadow-sm hover:shadow-md hover:border-amber-400/50 transition-all group">
+            <div data-filtro="PENDIENTE" class="cursor-pointer metric-card bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl border border-slate-200/90 dark:border-slate-800/80 p-4 sm:p-5 shadow-sm hover:border-amber-400/50 transition-all group">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Pendientes</span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Pendientes</span>
                     <div class="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center text-sm group-hover:scale-110 transition-transform">
                         <i class="fa-regular fa-clock"></i>
                     </div>
                 </div>
                 <div class="mt-3 flex items-baseline justify-between">
                     <span id="kpi-pendientes" class="text-2xl sm:text-3xl font-extrabold text-amber-600 dark:text-amber-400">0</span>
-                    <span id="kpi-pendientes-pct" class="text-[11px] font-semibold text-amber-600 dark:text-amber-400">0%</span>
+                    <span id="kpi-pendientes-pct" class="text-[11px] font-bold text-amber-600 dark:text-amber-400">0%</span>
                 </div>
-                <div class="mt-2 text-[11px] text-slate-500 dark:text-slate-400">Por iniciar</div>
+                <div class="kpi-bar-bg mt-3">
+                    <div id="kpi-pendientes-bar" class="kpi-bar-fill bg-amber-500" style="width: 0%;"></div>
+                </div>
+                <div class="mt-2 text-[10px] text-slate-400 dark:text-slate-500">Por iniciar</div>
             </div>
 
             <!-- Card 3: En Proceso -->
-            <div data-filtro="EN_PROCESO" class="cursor-pointer metric-card bg-white/80 dark:bg-slate-900/80 backdrop-blur-md rounded-2xl border border-slate-200/90 dark:border-slate-800/80 p-4 sm:p-5 shadow-sm hover:shadow-md hover:border-blue-400/50 transition-all group">
+            <div data-filtro="EN_PROCESO" class="cursor-pointer metric-card bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl border border-slate-200/90 dark:border-slate-800/80 p-4 sm:p-5 shadow-sm hover:border-blue-400/50 transition-all group">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">En Proceso</span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">En Proceso</span>
                     <div class="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm group-hover:scale-110 transition-transform">
                         <i class="fa-solid fa-spinner animate-spin"></i>
                     </div>
                 </div>
                 <div class="mt-3 flex items-baseline justify-between">
                     <span id="kpi-proceso" class="text-2xl sm:text-3xl font-extrabold text-blue-600 dark:text-blue-400">0</span>
-                    <span id="kpi-proceso-pct" class="text-[11px] font-semibold text-blue-600 dark:text-blue-400">0%</span>
+                    <span id="kpi-proceso-pct" class="text-[11px] font-bold text-blue-600 dark:text-blue-400">0%</span>
                 </div>
-                <div class="mt-2 text-[11px] text-slate-500 dark:text-slate-400">En desarrollo</div>
+                <div class="kpi-bar-bg mt-3">
+                    <div id="kpi-proceso-bar" class="kpi-bar-fill bg-blue-500" style="width: 0%;"></div>
+                </div>
+                <div class="mt-2 text-[10px] text-slate-400 dark:text-slate-500">En desarrollo activo</div>
             </div>
 
             <!-- Card 4: Completadas -->
-            <div data-filtro="COMPLETADA" class="cursor-pointer metric-card bg-white/80 dark:bg-slate-900/80 backdrop-blur-md rounded-2xl border border-slate-200/90 dark:border-slate-800/80 p-4 sm:p-5 shadow-sm hover:shadow-md hover:border-emerald-400/50 transition-all group">
+            <div data-filtro="COMPLETADA" class="cursor-pointer metric-card bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl border border-slate-200/90 dark:border-slate-800/80 p-4 sm:p-5 shadow-sm hover:border-emerald-400/50 transition-all group">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Completadas</span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Completadas</span>
                     <div class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm group-hover:scale-110 transition-transform">
                         <i class="fa-solid fa-check"></i>
                     </div>
                 </div>
                 <div class="mt-3 flex items-baseline justify-between">
                     <span id="kpi-completadas" class="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">0</span>
-                    <span id="kpi-completadas-pct" class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">0%</span>
+                    <span id="kpi-completadas-pct" class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">0%</span>
                 </div>
-                <div class="mt-2 text-[11px] text-slate-500 dark:text-slate-400">Finalizadas con éxito</div>
+                <div class="kpi-bar-bg mt-3">
+                    <div id="kpi-completadas-bar" class="kpi-bar-fill bg-emerald-500" style="width: 0%;"></div>
+                </div>
+                <div class="mt-2 text-[10px] text-slate-400 dark:text-slate-500">Finalizadas con éxito</div>
             </div>
 
         </section>
 
-        <!-- Barra de Control: Búsqueda Instantánea ("realtime") y Filtros -->
-        <section class="bg-white/85 dark:bg-slate-900/85 rounded-2xl border border-slate-200/90 dark:border-slate-800/80 p-4 sm:p-6 shadow-sm dark:shadow-xl backdrop-blur-md space-y-4 transition-colors duration-200">
+        <!-- Barra de Control: Búsqueda Instantánea Realtime (Centro de Mando según Pizarra) -->
+        <section class="search-spotlight-box p-5 sm:p-7 space-y-5 transition-all">
             
+            <!-- Encabezado técnico del buscador realtime -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-200/70 dark:border-slate-800/70">
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-ping"></span>
+                    <span class="text-xs font-extrabold tracking-wider uppercase bg-gradient-to-r from-indigo-600 to-cyan-500 bg-clip-text text-transparent">
+                        Búsqueda en Tiempo Real (Realtime Search)
+                    </span>
+                    <span class="hidden md:inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/20">
+                        Vanilla JS Live Filtering
+                    </span>
+                </div>
+                <div class="text-[11px] font-semibold text-slate-400 flex items-center gap-1.5">
+                    <i class="fa-solid fa-bolt text-amber-500"></i>
+                    <span>Filtro reactivo instantáneo por evento input</span>
+                </div>
+            </div>
+
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 
-                <!-- Input de búsqueda instantánea (realtime como en la pizarra) -->
+                <!-- Input de búsqueda instantánea prominente [ realtype | Q ] -->
                 <div class="relative flex-1">
-                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                        <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-indigo-500 dark:text-indigo-400">
+                        <i class="fa-solid fa-magnifying-glass text-base"></i>
                     </div>
                     <input 
                         type="text" 
                         id="input-busqueda" 
-                        placeholder="Buscar tareas en tiempo real por título, descripción o ID... (Presiona / para buscar)" 
-                        class="w-full pl-10 pr-24 py-3 rounded-xl bg-slate-50/80 dark:bg-slate-950/70 border border-slate-300/80 dark:border-slate-700/70 text-slate-900 dark:text-slate-100 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all shadow-inner"
+                        placeholder="Escribe aquí para buscar en tiempo real por título, contenido o #ID... (Presiona /)" 
+                        class="w-full pl-11 pr-24 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/90 border border-slate-300/80 dark:border-slate-700/80 text-slate-900 dark:text-slate-100 placeholder-slate-400 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all shadow-inner"
                         autocomplete="off"
                     >
-                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center gap-1.5">
+                    <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center gap-2">
                         <button 
                             id="btn-limpiar-busqueda" 
                             type="button" 
-                            class="hidden p-1 text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors"
+                            class="hidden p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors cursor-pointer"
                             title="Limpiar búsqueda"
                         >
                             <i class="fa-solid fa-xmark text-sm"></i>
                         </button>
-                        <kbd class="hidden sm:inline-block px-2 py-0.5 text-[10px] font-mono text-slate-400 bg-slate-200/60 dark:bg-slate-800 rounded border border-slate-300 dark:border-slate-700">
+                        <kbd class="hidden sm:inline-block px-2.5 py-1 text-[11px] font-mono font-semibold text-slate-500 bg-slate-200/70 dark:bg-slate-800 rounded-lg border border-slate-300 dark:border-slate-700 shadow-xs">
                             /
                         </kbd>
                     </div>
                 </div>
 
                 <!-- Botones de Filtrado por Estado (Flexbox) -->
-                <div class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none text-xs font-semibold">
-                    <button type="button" data-filtro="TODOS" class="btn-filtro active px-3.5 py-2.5 rounded-xl bg-indigo-600 text-white transition-all shadow-sm">
+                <div class="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-none text-xs font-bold">
+                    <button type="button" data-filtro="TODOS" class="btn-filtro active px-4 py-3 rounded-xl bg-indigo-600 text-white transition-all shadow-md shadow-indigo-600/20 cursor-pointer">
                         Todos <span id="badge-total" class="ml-1 opacity-80">(0)</span>
                     </button>
-                    <button type="button" data-filtro="PENDIENTE" class="btn-filtro px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700/80 dark:hover:text-white transition-all">
-                        Pendientes <span id="badge-pendientes" class="ml-1 opacity-70">(0)</span>
+                    <button type="button" data-filtro="PENDIENTE" class="btn-filtro px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800/80 dark:text-slate-300 dark:hover:bg-slate-700/80 dark:hover:text-white transition-all cursor-pointer">
+                        ⏳ Pendientes <span id="badge-pendientes" class="ml-1 opacity-70">(0)</span>
                     </button>
-                    <button type="button" data-filtro="EN_PROCESO" class="btn-filtro px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700/80 dark:hover:text-white transition-all">
-                        En Proceso <span id="badge-proceso" class="ml-1 opacity-70">(0)</span>
+                    <button type="button" data-filtro="EN_PROCESO" class="btn-filtro px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800/80 dark:text-slate-300 dark:hover:bg-slate-700/80 dark:hover:text-white transition-all cursor-pointer">
+                        🔄 En Proceso <span id="badge-proceso" class="ml-1 opacity-70">(0)</span>
                     </button>
-                    <button type="button" data-filtro="COMPLETADA" class="btn-filtro px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700/80 dark:hover:text-white transition-all">
-                        Completadas <span id="badge-completadas" class="ml-1 opacity-70">(0)</span>
+                    <button type="button" data-filtro="COMPLETADA" class="btn-filtro px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800/80 dark:text-slate-300 dark:hover:bg-slate-700/80 dark:hover:text-white transition-all cursor-pointer">
+                        ✅ Completadas <span id="badge-completadas" class="ml-1 opacity-70">(0)</span>
                     </button>
-                    <button id="btn-recargar" type="button" class="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-700/80 transition-all" title="Recargar lista">
+                    <button id="btn-recargar" type="button" class="px-3.5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 dark:bg-slate-800/80 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-700/80 transition-all cursor-pointer shadow-xs" title="Recargar lista">
                         <i class="fa-solid fa-rotate-right"></i>
                     </button>
                 </div>
 
             </div>
 
-            <!-- Resumen y opciones de ordenamiento -->
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-200/80 dark:border-slate-800/60 gap-2">
-                <span id="texto-conteo-resultados">Cargando tareas desde Spring Boot...</span>
-                <div class="flex items-center gap-3">
-                    <span id="indicador-realtime" class="inline-flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400 font-medium">
-                        <i class="fa-solid fa-bolt text-[10px]"></i> Filtro Instantáneo
-                    </span>
-                    <span class="text-slate-300 dark:text-slate-700 hidden sm:inline">&bull;</span>
-                    <div class="flex items-center gap-1.5">
-                        <label for="select-orden" class="text-slate-400">Ordenar:</label>
-                        <select id="select-orden" class="bg-transparent text-slate-700 dark:text-slate-300 font-medium focus:outline-none cursor-pointer">
+            <!-- Resumen, Selector de Vista y Ordenamiento -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between text-xs text-slate-500 dark:text-slate-400 pt-3 border-t border-slate-200/70 dark:border-slate-800/70 gap-3">
+                <span id="texto-conteo-resultados" class="font-medium">Cargando tareas desde Spring Boot...</span>
+                
+                <div class="flex flex-wrap items-center gap-3">
+                    <!-- Selector de Vista: Tarjetas / Kanban / Tabla -->
+                    <div class="inline-flex items-center p-1 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 shadow-inner">
+                        <button id="btn-vista-grid" type="button" class="btn-vista active p-1.5 px-3.5 rounded-lg text-xs font-bold bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm transition-all cursor-pointer" title="Vista en Tarjetas">
+                            <i class="fa-solid fa-grip mr-1.5"></i>Tarjetas (Grid)
+                        </button>
+                        <button id="btn-vista-kanban" type="button" class="btn-vista p-1.5 px-3.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer" title="Vista Tablero Kanban">
+                            <i class="fa-solid fa-table-columns mr-1.5"></i>Kanban
+                        </button>
+                        <button id="btn-vista-tabla" type="button" class="btn-vista p-1.5 px-3.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer" title="Vista Lista en Tabla">
+                            <i class="fa-solid fa-list mr-1.5"></i>Tabla
+                        </button>
+                    </div>
+
+                    <div class="flex items-center gap-1.5 pl-2 border-l border-slate-200 dark:border-slate-800">
+                        <label for="select-orden" class="text-slate-400 font-medium">Ordenar:</label>
+                        <select id="select-orden" class="bg-transparent text-slate-700 dark:text-slate-300 font-semibold focus:outline-none cursor-pointer">
                             <option value="recientes" class="dark:bg-slate-900">Más recientes</option>
                             <option value="antiguos" class="dark:bg-slate-900">Más antiguos</option>
                             <option value="az" class="dark:bg-slate-900">Título (A-Z)</option>
@@ -251,94 +346,174 @@
 
         </section>
 
-        <!-- Contenedor del Grid de Tarjetas (CSS Grid / Flexbox + Media Queries responsivas como en la pizarra) -->
+        <!-- Contenedores de Vistas de Tareas -->
         <section aria-label="Listado de Tareas">
             
-            <!-- Spinner de Carga -->
-            <div id="loading-spinner" class="py-20 flex flex-col items-center justify-center space-y-4">
+            <!-- Skeleton Loader Shimmer (Efecto de carga profesional) -->
+            <div id="loading-spinner" class="py-12 flex flex-col items-center justify-center space-y-4">
                 <div class="w-12 h-12 border-4 border-indigo-500/20 border-t-indigo-600 dark:border-t-indigo-500 rounded-full animate-spin"></div>
-                <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Conectando con la base de datos PostgreSQL...</p>
+                <p class="text-sm font-semibold text-slate-600 dark:text-slate-300">Conectando con PostgreSQL...</p>
             </div>
 
             <!-- Estado Vacío (Sin tareas o sin resultados de búsqueda) -->
             <div id="estado-vacio" class="hidden py-16 px-4 text-center rounded-3xl border-2 border-dashed border-slate-300 dark:border-slate-800 bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm">
-                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center text-slate-400 text-2xl shadow-inner">
-                    <i class="fa-regular fa-folder-open"></i>
+                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400 text-2xl shadow-inner">
+                    <i class="fa-solid fa-box-open"></i>
                 </div>
                 <h3 id="vacio-titulo" class="text-lg font-bold text-slate-900 dark:text-white mb-1">No hay tareas que mostrar</h3>
                 <p id="vacio-subtitulo" class="text-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-6">
                     Aún no has registrado ninguna tarea o ninguna coincide con tu búsqueda.
                 </p>
-                <button 
-                    id="btn-vacio-crear" 
-                    type="button" 
-                    class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-all shadow-md shadow-indigo-600/20 active:scale-95 cursor-pointer"
-                >
-                    <i class="fa-solid fa-plus text-xs"></i> Crear primera tarea
-                </button>
+                <div class="flex items-center justify-center gap-3">
+                    <button 
+                        id="btn-vacio-crear" 
+                        type="button" 
+                        class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-all shadow-md shadow-indigo-600/20 active:scale-95 cursor-pointer"
+                    >
+                        <i class="fa-solid fa-plus text-xs"></i> Crear primera tarea
+                    </button>
+                    <button 
+                        id="btn-vacio-demo" 
+                        type="button" 
+                        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all active:scale-95 cursor-pointer"
+                    >
+                        <i class="fa-solid fa-wand-magic-sparkles text-xs text-indigo-500"></i> Cargar demo
+                    </button>
+                </div>
             </div>
 
-            <!-- Grid Responsivo de Tarjetas:
-                 Mobile (Media query < 640px): 1 columna
-                 Tablet (sm: >= 640px): 2 columnas
-                 Desktop (lg: >= 1024px): 3 columnas
-                 Desktop Grande (xl: >= 1280px): 4 columnas
-            -->
+            <!-- VISTA 1: Grid Responsivo de Tarjetas -->
             <div id="grid-tareas" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                 <!-- Las tarjetas se generan dinámicamente con JavaScript -->
+            </div>
+
+            <!-- VISTA 2: Tablero Kanban (Columnas interactivas por estado) -->
+            <div id="kanban-view" class="hidden grid grid-cols-1 md:grid-cols-3 gap-5">
+                <!-- Columna PENDIENTE -->
+                <div class="kanban-column" data-columna="PENDIENTE">
+                    <div class="flex items-center justify-between pb-3 mb-3 border-b border-amber-500/20">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                            <h3 class="font-bold text-sm text-slate-800 dark:text-slate-200">⏳ Pendientes</h3>
+                        </div>
+                        <span id="kanban-count-pendiente" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400">0</span>
+                    </div>
+                    <div id="kanban-list-pendiente" class="kanban-cards-container"></div>
+                </div>
+
+                <!-- Columna EN PROCESO -->
+                <div class="kanban-column" data-columna="EN_PROCESO">
+                    <div class="flex items-center justify-between pb-3 mb-3 border-b border-blue-500/20">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-blue-500 status-pulse"></span>
+                            <h3 class="font-bold text-sm text-slate-800 dark:text-slate-200">🔄 En Proceso</h3>
+                        </div>
+                        <span id="kanban-count-proceso" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400">0</span>
+                    </div>
+                    <div id="kanban-list-proceso" class="kanban-cards-container"></div>
+                </div>
+
+                <!-- Columna COMPLETADA -->
+                <div class="kanban-column" data-columna="COMPLETADA">
+                    <div class="flex items-center justify-between pb-3 mb-3 border-b border-emerald-500/20">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                            <h3 class="font-bold text-sm text-slate-800 dark:text-slate-200">✅ Completadas</h3>
+                        </div>
+                        <span id="kanban-count-completada" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">0</span>
+                    </div>
+                    <div id="kanban-list-completada" class="kanban-cards-container"></div>
+                </div>
+            </div>
+
+            <!-- VISTA 3: Tabla Compacta -->
+            <div id="table-view" class="hidden table-view-container overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-700 dark:text-slate-300">
+                    <thead class="bg-slate-50 dark:bg-slate-900/90 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800">
+                        <tr>
+                            <th class="px-5 py-3.5">ID</th>
+                            <th class="px-5 py-3.5">Título</th>
+                            <th class="px-5 py-3.5">Descripción</th>
+                            <th class="px-5 py-3.5">Estado</th>
+                            <th class="px-5 py-3.5 text-right">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body" class="divide-y divide-slate-100 dark:divide-slate-800/80"></tbody>
+                </table>
             </div>
 
         </section>
 
     </main>
 
-    <!-- Modal: Detalle de Tarea (Como indica la flecha en la pizarra que va de la tarjeta al documento) -->
+    <!-- Modal: Detalle de Tarea (Ficha Técnica / Document Sheet según Pizarra) -->
     <div id="modal-detalle" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true">
         <!-- Backdrop difuminado -->
-        <div class="fixed inset-0 bg-slate-950/70 backdrop-blur-md transition-opacity" id="backdrop-detalle"></div>
+        <div class="fixed inset-0 bg-slate-950/75 backdrop-blur-md transition-opacity" id="backdrop-detalle"></div>
 
         <div class="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20 flex items-center justify-center">
-            <div class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl max-w-lg w-full p-6 sm:p-8 space-y-6 text-slate-800 dark:text-slate-100 transform transition-all animate-in fade-in zoom-in-95">
+            <div class="relative document-sheet max-w-xl w-full p-6 sm:p-8 space-y-6 text-slate-800 dark:text-slate-100 transform transition-all animate-in fade-in zoom-in-95">
                 
-                <!-- Encabezado del Detalle -->
+                <!-- Encabezado del Documento / Ficha Técnica -->
                 <div class="flex items-start justify-between gap-4 border-b border-slate-100 dark:border-slate-800/80 pb-4">
-                    <div class="space-y-1.5">
-                        <div class="flex items-center gap-2">
-                            <span id="detalle-id-badge" class="px-2.5 py-0.5 rounded-lg text-xs font-mono font-bold bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/20">
+                    <div class="space-y-2">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-[10px] font-bold bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/20">
+                                <i class="fa-solid fa-file-invoice"></i> FICHA TÉCNICA
+                            </span>
+                            <span id="detalle-id-badge" class="px-2.5 py-0.5 rounded-lg text-xs font-mono font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                                 ID: #--
                             </span>
                             <span id="detalle-estado-badge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold">
                                 Pendiente
                             </span>
                         </div>
-                        <h2 id="detalle-titulo" class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white break-words mt-1">Título de la Tarea</h2>
+                        <h2 id="detalle-titulo" class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white break-words tracking-tight mt-1">Título de la Tarea</h2>
                     </div>
-                    <button type="button" id="btn-cerrar-detalle" class="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Cerrar">
+                    <button type="button" id="btn-cerrar-detalle" class="text-slate-400 hover:text-slate-700 dark:hover:text-white p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer" title="Cerrar Ficha">
                         <i class="fa-solid fa-xmark text-lg"></i>
                     </button>
                 </div>
 
-                <!-- Cuerpo del Detalle -->
+                <!-- Selector Rápido de Estado directo en la Ficha -->
+                <div class="flex flex-wrap items-center gap-2 p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800/80 text-xs">
+                    <span class="text-slate-500 font-semibold flex items-center gap-1">
+                        <i class="fa-solid fa-arrows-spin text-indigo-500"></i> Cambiar estado:
+                    </span>
+                    <button type="button" id="btn-detalle-status-pendiente" class="px-2.5 py-1 rounded-lg font-semibold bg-white dark:bg-slate-800 hover:bg-amber-50 dark:hover:bg-amber-500/10 text-slate-700 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400 border border-slate-200 dark:border-slate-700 transition-all cursor-pointer">
+                        ⏳ Pendiente
+                    </button>
+                    <button type="button" id="btn-detalle-status-proceso" class="px-2.5 py-1 rounded-lg font-semibold bg-white dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-500/10 text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 border border-slate-200 dark:border-slate-700 transition-all cursor-pointer">
+                        🔄 En Proceso
+                    </button>
+                    <button type="button" id="btn-detalle-status-completada" class="px-2.5 py-1 rounded-lg font-semibold bg-white dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700 transition-all cursor-pointer">
+                        ✅ Completada
+                    </button>
+                </div>
+
+                <!-- Cuerpo del Detalle / Papel de Documento -->
                 <div class="space-y-4">
                     <div>
                         <div class="flex items-center justify-between mb-1.5">
-                            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Descripción completa</h3>
-                            <button id="btn-copiar-descripcion" type="button" class="text-[11px] text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
-                                <i class="fa-regular fa-copy"></i> Copiar
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center gap-1.5">
+                                <i class="fa-regular fa-file-lines text-indigo-500"></i> Contenido y especificación
+                            </h3>
+                            <button id="btn-copiar-descripcion" type="button" class="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 cursor-pointer">
+                                <i class="fa-regular fa-copy"></i> Copiar texto
                             </button>
                         </div>
-                        <div id="detalle-descripcion" class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800/80 text-sm text-slate-700 dark:text-slate-200 whitespace-pre-wrap leading-relaxed min-h-[110px] shadow-inner">
+                        <div id="detalle-descripcion" class="doc-paper-content p-5 text-sm text-slate-700 dark:text-slate-200 whitespace-pre-wrap leading-relaxed min-h-[120px] shadow-inner">
                             Sin descripción.
                         </div>
                     </div>
 
-                    <!-- Datos Técnicos -->
-                    <div class="grid grid-cols-2 gap-3 pt-2 text-xs">
-                        <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800">
+                    <!-- Datos Técnicos de Arquitectura -->
+                    <div class="grid grid-cols-2 gap-3 pt-1 text-xs">
+                        <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
                             <span class="text-slate-400 block mb-1">Estado de Ejecución:</span>
                             <span id="detalle-estado-texto" class="font-bold text-slate-800 dark:text-slate-200 text-sm">PENDIENTE</span>
                         </div>
-                        <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800">
+                        <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
                             <span class="text-slate-400 block mb-1">Persistencia Backend:</span>
                             <span class="font-bold text-slate-800 dark:text-slate-200 text-sm">PostgreSQL JPA</span>
                         </div>
@@ -375,17 +550,33 @@
         <div class="fixed inset-0 bg-slate-950/70 backdrop-blur-md transition-opacity" id="backdrop-form"></div>
 
         <div class="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20 flex items-center justify-center">
-            <div class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl max-w-lg w-full p-6 sm:p-8 space-y-6 text-slate-800 dark:text-slate-100 transform transition-all">
+            <div class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl max-w-lg w-full p-6 sm:p-8 space-y-6 text-slate-800 dark:text-slate-100 transform transition-all animate-in fade-in zoom-in-95">
                 
                 <!-- Encabezado del Formulario -->
                 <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-4">
                     <div>
-                        <h2 id="modal-form-titulo" class="text-xl font-bold text-slate-900 dark:text-white">Nueva Tarea</h2>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Completa los campos para persistir en PostgreSQL.</p>
+                        <h2 id="modal-form-titulo" class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Nueva Tarea</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Persiste directamente en PostgreSQL vía Spring Boot.</p>
                     </div>
-                    <button type="button" id="btn-cerrar-form" class="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    <button type="button" id="btn-cerrar-form" class="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
                         <i class="fa-solid fa-xmark text-lg"></i>
                     </button>
+                </div>
+
+                <!-- Plantillas Rápidas (Chips de conveniencia) -->
+                <div class="space-y-1.5">
+                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Plantillas rápidas:</span>
+                    <div class="flex flex-wrap gap-1.5">
+                        <button type="button" class="btn-template px-2.5 py-1 rounded-lg text-[11px] font-medium bg-slate-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-600 text-slate-600 dark:text-slate-300 transition-all cursor-pointer" data-titulo="Implementar autenticación JWT" data-desc="Configurar Spring Security y filtros de token JWT.">
+                            🔐 Seguridad JWT
+                        </button>
+                        <button type="button" class="btn-template px-2.5 py-1 rounded-lg text-[11px] font-medium bg-slate-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-600 text-slate-600 dark:text-slate-300 transition-all cursor-pointer" data-titulo="Optimizar consultas en PostgreSQL" data-desc="Añadir índices a las claves foráneas y columnas de filtrado frecuente.">
+                            ⚡ Optimizar BD
+                        </button>
+                        <button type="button" class="btn-template px-2.5 py-1 rounded-lg text-[11px] font-medium bg-slate-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-600 text-slate-600 dark:text-slate-300 transition-all cursor-pointer" data-titulo="Diseñar vista Kanban interactiva" data-desc="Añadir arrastrar y soltar con microanimaciones CSS.">
+                            🎨 Interfaz Kanban
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Formulario -->
@@ -396,7 +587,7 @@
                     <div>
                         <div class="flex items-center justify-between mb-1.5">
                             <label for="titulo" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-                                Título <span class="text-rose-500">*</span>
+                                Título de la Tarea <span class="text-rose-500">*</span>
                             </label>
                             <span id="char-titulo" class="text-[10px] text-slate-400 font-mono">0/150</span>
                         </div>
@@ -404,10 +595,10 @@
                             type="text" 
                             id="titulo" 
                             name="titulo" 
-                            placeholder="Ej. Integrar endpoints con Fetch API" 
+                            placeholder="Ej. Crear índices en PostgreSQL para acelerar búsquedas" 
                             required 
                             maxlength="150"
-                            class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all shadow-inner"
+                            class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-950/70 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all shadow-inner"
                         >
                     </div>
 
@@ -415,35 +606,48 @@
                     <div>
                         <div class="flex items-center justify-between mb-1.5">
                             <label for="descripcion" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-                                Descripción
+                                Descripción Detallada
                             </label>
                             <span id="char-descripcion" class="text-[10px] text-slate-400 font-mono">0/500</span>
                         </div>
                         <textarea 
                             id="descripcion" 
                             name="descripcion" 
-                            rows="4" 
-                            placeholder="Añade detalles técnicos, notas o criterios de aceptación..."
+                            rows="3" 
+                            placeholder="Añade notas de implementación, criterios de aceptación o detalles técnicos..."
                             maxlength="500"
-                            class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all resize-none shadow-inner"
+                            class="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-950/70 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all resize-none shadow-inner"
                         ></textarea>
                     </div>
 
-                    <!-- Campo: Estado -->
+                    <!-- Campo: Estado con Selector Visual de Tarjetas -->
                     <div>
-                        <label for="estado" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
-                            Estado <span class="text-rose-500">*</span>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
+                            Estado Inicial <span class="text-rose-500">*</span>
                         </label>
-                        <select 
-                            id="estado" 
-                            name="estado" 
-                            required
-                            class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all cursor-pointer shadow-inner font-medium"
-                        >
-                            <option value="PENDIENTE">⏳ Pendiente</option>
-                            <option value="EN_PROCESO">🔄 En Proceso</option>
-                            <option value="COMPLETADA">✅ Completada</option>
+                        
+                        <!-- Select tradicional oculto (para compatibilidad de formulario) -->
+                        <select id="estado" name="estado" class="hidden">
+                            <option value="PENDIENTE">PENDIENTE</option>
+                            <option value="EN_PROCESO">EN_PROCESO</option>
+                            <option value="COMPLETADA">COMPLETADA</option>
                         </select>
+
+                        <!-- Selector Visual Interactivo -->
+                        <div class="grid grid-cols-3 gap-2.5" id="selector-estado-cards">
+                            <button type="button" data-estado-val="PENDIENTE" class="btn-estado-opcion active p-3 rounded-2xl border text-center transition-all cursor-pointer border-amber-500 bg-amber-50/50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-300">
+                                <i class="fa-regular fa-clock block text-base mb-1"></i>
+                                <span class="text-xs font-bold block">Pendiente</span>
+                            </button>
+                            <button type="button" data-estado-val="EN_PROCESO" class="btn-estado-opcion p-3 rounded-2xl border border-slate-200 dark:border-slate-800 text-center transition-all cursor-pointer hover:border-blue-400 text-slate-600 dark:text-slate-400">
+                                <i class="fa-solid fa-spinner block text-base mb-1"></i>
+                                <span class="text-xs font-bold block">En Proceso</span>
+                            </button>
+                            <button type="button" data-estado-val="COMPLETADA" class="btn-estado-opcion p-3 rounded-2xl border border-slate-200 dark:border-slate-800 text-center transition-all cursor-pointer hover:border-emerald-400 text-slate-600 dark:text-slate-400">
+                                <i class="fa-solid fa-check block text-base mb-1"></i>
+                                <span class="text-xs font-bold block">Completada</span>
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Botones de Acción del Formulario -->
@@ -458,7 +662,7 @@
                         <button 
                             type="submit" 
                             id="btn-submit-form" 
-                            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 active:scale-95 transition-all shadow-md shadow-indigo-600/30 cursor-pointer"
+                            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 active:scale-95 transition-all shadow-md shadow-indigo-600/30 cursor-pointer"
                         >
                             <i class="fa-solid fa-floppy-disk"></i>
                             <span id="btn-submit-texto">Guardar Tarea</span>
@@ -484,6 +688,6 @@
     </footer>
 
     <!-- Lógica de la aplicación con Vanilla JS -->
-    <script src="app.js"></script>
+    <script src="app.js?v=5"></script>
 </body>
 </html>

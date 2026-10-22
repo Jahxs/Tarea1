@@ -1,11 +1,13 @@
 /**
  * =============================================================================
- * MULTIVERSE EXPLORER - UI MODULE (ui.js)
+ * POKÉDEX EXPLORER - UI MODULE (ui.js)
  * =============================================================================
  * Handles all DOM rendering and modal presentations using jQuery ($):
- * 1. Responsive Card Grid for Pokémon & Rick and Morty
- * 2. Contained, non-overflowing data tables for Locations & Episodes
- * 3. Chained Modal Detail View displaying unified 3-endpoint data
+ * 1. Responsive 3/4-Column Pokémon Card Grid
+ * 2. Cascading 3-Endpoint Modal View displaying:
+ *    - Base Combat Statistics (Endpoint 1: /pokemon)
+ *    - Official Pokédex Lore & Habitat (Endpoint 2: /pokemon-species)
+ *    - Complete Evolutionary Tree with Sprites (Endpoint 3: /evolution-chain)
  * =============================================================================
  */
 
@@ -14,44 +16,36 @@
 
     const { escapeHtml, formatId } = window.AppUtils;
 
-    /**
-     * Determines badge styling for Rick and Morty status.
-     */
-    function getRickStatusConfig(status) {
-        switch (status) {
-            case 'Alive':
-                return {
-                    badgeClass: 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30',
-                    dotClass: 'bg-emerald-500',
-                    textClass: 'text-emerald-600 dark:text-emerald-400'
-                };
-            case 'Dead':
-                return {
-                    badgeClass: 'bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30',
-                    dotClass: 'bg-rose-500',
-                    textClass: 'text-rose-600 dark:text-rose-400'
-                };
-            default:
-                return {
-                    badgeClass: 'bg-slate-500/20 text-slate-600 dark:text-slate-400 border border-slate-500/30',
-                    dotClass: 'bg-slate-400',
-                    textClass: 'text-slate-500 dark:text-slate-400'
-                };
-        }
-    }
-
-    // =========================================================================
-    // CARDS RENDERING (JQUERY)
-    // =========================================================================
+    // Type color styling dictionary for rich visual aesthetics
+    const TYPE_COLORS = {
+        normal: 'bg-stone-100 text-stone-700 dark:bg-stone-800 dark:text-stone-300 border-stone-300 dark:border-stone-700',
+        fire: 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30',
+        water: 'bg-sky-500/15 text-sky-600 dark:text-sky-400 border-sky-500/30',
+        grass: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30',
+        electric: 'bg-yellow-500/15 text-yellow-600 dark:text-yellow-400 border-yellow-500/30',
+        ice: 'bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border-cyan-500/30',
+        fighting: 'bg-red-500/15 text-red-600 dark:text-red-400 border-red-500/30',
+        poison: 'bg-purple-500/15 text-purple-600 dark:text-purple-400 border-purple-500/30',
+        ground: 'bg-orange-500/15 text-orange-600 dark:text-orange-400 border-orange-500/30',
+        flying: 'bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border-indigo-500/30',
+        psychic: 'bg-pink-500/15 text-pink-600 dark:text-pink-400 border-pink-500/30',
+        bug: 'bg-lime-500/15 text-lime-600 dark:text-lime-400 border-lime-500/30',
+        rock: 'bg-amber-700/15 text-amber-700 dark:text-amber-400 border-amber-700/30',
+        ghost: 'bg-violet-500/15 text-violet-600 dark:text-violet-400 border-violet-500/30',
+        dragon: 'bg-blue-600/15 text-blue-600 dark:text-blue-400 border-blue-600/30',
+        dark: 'bg-neutral-800/20 text-neutral-800 dark:text-neutral-300 border-neutral-700',
+        steel: 'bg-slate-400/20 text-slate-600 dark:text-slate-300 border-slate-400',
+        fairy: 'bg-rose-400/15 text-rose-500 dark:text-rose-300 border-rose-400/30'
+    };
 
     /**
      * Renders responsive Pokémon cards into the grid.
+     *
+     * @param {Array} pokemonList - Array of Pokémon data objects.
+     * @param {Function} onCardClick - Callback when card or detail button is triggered.
      */
     function renderPokemonCards(pokemonList, onCardClick) {
         const $cardsContainer = $('#contenedor-cards');
-        const $tableContainer = $('#contenedor-tabla-responsiva');
-
-        $tableContainer.addClass('hidden');
         $cardsContainer.removeClass('hidden').empty();
 
         pokemonList.forEach(pokemon => {
@@ -59,18 +53,22 @@
                         || pokemon.sprites?.front_default 
                         || '';
 
-            const typesHtml = (pokemon.types || []).map(t => `
-                <span class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-                    ${escapeHtml(t.type.name)}
-                </span>
-            `).join('');
+            const typesHtml = (pokemon.types || []).map(t => {
+                const typeName = t.type.name.toLowerCase();
+                const colorClasses = TYPE_COLORS[typeName] || 'bg-slate-100 text-slate-700 border-slate-200';
+                return `
+                    <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider border ${colorClasses}">
+                        ${escapeHtml(t.type.name)}
+                    </span>
+                `;
+            }).join('');
 
             const formattedId = formatId(pokemon.id, 3);
 
             const $card = $(`
                 <article class="entity-card animate-fade-in group cursor-pointer" data-id="${pokemon.id}">
                     <div class="entity-image-wrapper bg-gradient-to-b from-rose-50/50 to-amber-50/50 dark:from-slate-900 dark:to-slate-950">
-                        <img src="${sprite}" alt="${escapeHtml(pokemon.name)}" class="entity-image object-contain p-3" loading="lazy">
+                        <img src="${sprite}" alt="${escapeHtml(pokemon.name)}" class="entity-image object-contain p-3 transition-transform duration-300 group-hover:scale-105" loading="lazy">
                         <span class="absolute top-3 right-3 px-2 py-0.5 rounded-lg text-[10px] font-mono font-bold bg-rose-600 text-white shadow-xs">
                             ${formattedId}
                         </span>
@@ -117,170 +115,12 @@
     }
 
     /**
-     * Renders Rick and Morty character cards.
-     */
-    function renderRickCharacters(characterList, onCardClick) {
-        const $cardsContainer = $('#contenedor-cards');
-        const $tableContainer = $('#contenedor-tabla-responsiva');
-
-        $tableContainer.addClass('hidden');
-        $cardsContainer.removeClass('hidden').empty();
-
-        characterList.forEach(character => {
-            const statusConfig = getRickStatusConfig(character.status);
-            const $card = $(`
-                <article class="entity-card animate-fade-in group cursor-pointer" data-id="${character.id}">
-                    <div class="entity-image-wrapper">
-                        <img src="${character.image}" alt="${escapeHtml(character.name)}" class="entity-image" loading="lazy">
-                        <span class="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[11px] font-bold ${statusConfig.badgeClass} shadow-md backdrop-blur-md">
-                            <span class="w-2 h-2 rounded-full ${statusConfig.dotClass} inline-block mr-1"></span>
-                            ${character.status}
-                        </span>
-                        <span class="absolute top-3 right-3 px-2 py-0.5 rounded-lg text-[10px] font-mono font-bold bg-slate-900/80 text-white backdrop-blur-md">
-                            #${character.id}
-                        </span>
-                    </div>
-
-                    <div class="p-4 space-y-2.5 flex-1 flex flex-col justify-between">
-                        <div>
-                            <h3 class="font-extrabold text-base text-slate-900 dark:text-white group-hover:text-emerald-500 transition-colors line-clamp-1">
-                                ${escapeHtml(character.name)}
-                            </h3>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5 mt-0.5">
-                                <i class="fa-solid fa-dna text-emerald-500 text-[10px]"></i>
-                                <span>${character.species} &bull; ${character.gender}</span>
-                            </p>
-                        </div>
-
-                        <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-100 dark:border-slate-800/80 text-[11px] space-y-1">
-                            <div class="text-slate-400">Origin:</div>
-                            <div class="font-semibold text-slate-700 dark:text-slate-300 truncate">${escapeHtml(character.origin.name)}</div>
-                        </div>
-
-                        <button 
-                            type="button" 
-                            class="btn-trigger-detail w-full py-2 px-3 rounded-xl text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-500/10 dark:hover:bg-emerald-500/20 border border-emerald-200 dark:border-emerald-500/20 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
-                        >
-                            <i class="fa-solid fa-address-card text-xs"></i>
-                            <span>View Character Dossier</span>
-                        </button>
-                    </div>
-                </article>
-            `);
-
-            $card.on('click', () => {
-                if (typeof onCardClick === 'function') onCardClick(character);
-            });
-
-            $cardsContainer.append($card);
-        });
-    }
-
-    // =========================================================================
-    // CONTAINED RESPONSIVE TABLES
-    // =========================================================================
-
-    function renderLocationsTable(locations) {
-        const $cardsContainer = $('#contenedor-cards');
-        const $tableContainer = $('#contenedor-tabla-responsiva');
-        const $tableHead = $('#tabla-head');
-        const $tableBody = $('#tabla-body');
-
-        $cardsContainer.addClass('hidden');
-        $tableContainer.removeClass('hidden');
-
-        $('#tabla-titulo-encabezado').text('Multiverse Locations (Endpoint: /api/location)');
-        $('#badge-tabla-conteo').text(`${locations.length} locations rendered`);
-
-        $tableHead.html(`
-            <tr>
-                <th class="px-5 py-3.5">ID</th>
-                <th class="px-5 py-3.5">Location Name</th>
-                <th class="px-5 py-3.5">Type</th>
-                <th class="px-5 py-3.5">Dimension</th>
-                <th class="px-5 py-3.5 text-right">Residents</th>
-            </tr>
-        `);
-
-        $tableBody.empty();
-        locations.forEach(loc => {
-            $tableBody.append(`
-                <tr class="hover:bg-emerald-50/50 dark:hover:bg-emerald-500/5 transition-colors">
-                    <td class="px-5 py-3.5 font-mono font-bold text-slate-400">#${loc.id}</td>
-                    <td class="px-5 py-3.5 font-bold text-slate-900 dark:text-white table-truncate" title="${escapeHtml(loc.name)}">
-                        <i class="fa-solid fa-location-dot text-emerald-500 mr-1.5"></i>${escapeHtml(loc.name)}
-                    </td>
-                    <td class="px-5 py-3.5">
-                        <span class="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-                            ${escapeHtml(loc.type || 'Unknown')}
-                        </span>
-                    </td>
-                    <td class="px-5 py-3.5 text-slate-600 dark:text-slate-400 table-truncate" title="${escapeHtml(loc.dimension)}">
-                        ${escapeHtml(loc.dimension)}
-                    </td>
-                    <td class="px-5 py-3.5 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">
-                        ${loc.residents ? loc.residents.length : 0}
-                    </td>
-                </tr>
-            `);
-        });
-    }
-
-    function renderEpisodesTable(episodes) {
-        const $cardsContainer = $('#contenedor-cards');
-        const $tableContainer = $('#contenedor-tabla-responsiva');
-        const $tableHead = $('#tabla-head');
-        const $tableBody = $('#tabla-body');
-
-        $cardsContainer.addClass('hidden');
-        $tableContainer.removeClass('hidden');
-
-        $('#tabla-titulo-encabezado').text('Broadcast Episodes (Endpoint: /api/episode)');
-        $('#badge-tabla-conteo').text(`${episodes.length} episodes rendered`);
-
-        $tableHead.html(`
-            <tr>
-                <th class="px-5 py-3.5">ID</th>
-                <th class="px-5 py-3.5">Episode Code</th>
-                <th class="px-5 py-3.5">Episode Title</th>
-                <th class="px-5 py-3.5">Air Date</th>
-                <th class="px-5 py-3.5 text-right">Characters</th>
-            </tr>
-        `);
-
-        $tableBody.empty();
-        episodes.forEach(ep => {
-            $tableBody.append(`
-                <tr class="hover:bg-purple-50/50 dark:hover:bg-purple-500/5 transition-colors">
-                    <td class="px-5 py-3.5 font-mono font-bold text-slate-400">#${ep.id}</td>
-                    <td class="px-5 py-3.5">
-                        <span class="px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-500/20">
-                            ${ep.episode}
-                        </span>
-                    </td>
-                    <td class="px-5 py-3.5 font-bold text-slate-900 dark:text-white table-truncate" title="${escapeHtml(ep.name)}">
-                        <i class="fa-solid fa-play text-purple-500 mr-1.5 text-[10px]"></i>${escapeHtml(ep.name)}
-                    </td>
-                    <td class="px-5 py-3.5 text-slate-600 dark:text-slate-400">
-                        ${escapeHtml(ep.air_date)}
-                    </td>
-                    <td class="px-5 py-3.5 text-right font-mono font-bold text-purple-600 dark:text-purple-400">
-                        ${ep.characters ? ep.characters.length : 0}
-                    </td>
-                </tr>
-            `);
-        });
-    }
-
-    // =========================================================================
-    // MODAL DETAIL VIEW (3-ENDPOINT JOIN VISUALIZATION)
-    // =========================================================================
-
-    /**
      * Renders detailed modal displaying data joined from:
      * 1. /pokemon
      * 2. /pokemon-species
      * 3. /evolution-chain
+     *
+     * @param {Object} pokemon - Unified 3-endpoint Pokémon object.
      */
     function openPokemonDetailModal(pokemon) {
         const sprite = pokemon.sprites?.other?.['official-artwork']?.front_default 
@@ -291,13 +131,13 @@
             <span class="text-rose-600 dark:text-rose-400 font-bold">
                 Pokédex ${formatId(pokemon.id, 3)}
             </span> &bull; 
-            <span class="text-slate-400 font-normal">3-Endpoint JOIN Chain</span>
+            <span class="text-slate-400 font-normal">3-Endpoint JOIN Cascade</span>
         `);
 
         $('#modal-titulo').text(pokemon.name.toUpperCase());
         $('#modal-imagen').attr({ src: sprite, alt: pokemon.name });
 
-        // Base Stats bars
+        // Base Stats bars (from Endpoint 1)
         const statsHtml = (pokemon.stats || []).map(s => `
             <div class="space-y-1">
                 <div class="flex justify-between text-[10px] font-semibold text-slate-400 uppercase">
@@ -388,7 +228,7 @@
                 <span class="font-bold text-slate-800 dark:text-slate-200">${(pokemon.weight / 10).toFixed(1)} kg</span>
             </div>
 
-            <!-- Base Combat Stats -->
+            <!-- Base Combat Stats from Endpoint 1 -->
             <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 col-span-2 space-y-2">
                 <span class="text-slate-400 block font-bold text-[11px] uppercase tracking-wide">
                     Base Combat Statistics (Endpoint 1: /pokemon)
@@ -398,51 +238,6 @@
 
             <!-- Evolution Chain from Endpoint 3 -->
             ${evolutionChainHtml}
-        `);
-
-        showModal();
-    }
-
-    /**
-     * Renders detailed modal for Rick and Morty character.
-     */
-    function openRickDetailModal(character) {
-        const statusConfig = getRickStatusConfig(character.status);
-
-        $('#modal-badge-id').html(`
-            <span class="text-emerald-600 dark:text-emerald-400 font-bold">
-                ID #${character.id}
-            </span> &bull; 
-            <span class="text-slate-400 font-normal">Rick & Morty Character Dossier</span>
-        `);
-
-        $('#modal-titulo').text(character.name);
-        $('#modal-imagen').attr({ src: character.image, alt: character.name });
-
-        $('#modal-descripcion-grid').html(`
-            <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
-                <span class="text-slate-400 block mb-0.5">Vital Status:</span>
-                <span class="font-bold ${statusConfig.textClass} flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full ${statusConfig.dotClass}"></span>
-                    ${character.status}
-                </span>
-            </div>
-            <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
-                <span class="text-slate-400 block mb-0.5">Species & Gender:</span>
-                <span class="font-bold text-slate-800 dark:text-slate-200">${character.species} (${character.gender})</span>
-            </div>
-            <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 col-span-2">
-                <span class="text-slate-400 block mb-0.5">Origin Location:</span>
-                <span class="font-bold text-slate-800 dark:text-slate-200">${escapeHtml(character.origin.name)}</span>
-            </div>
-            <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 col-span-2">
-                <span class="text-slate-400 block mb-0.5">Last Known Location:</span>
-                <span class="font-bold text-slate-800 dark:text-slate-200">${escapeHtml(character.location.name)}</span>
-            </div>
-            <div class="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 col-span-2 text-emerald-600 dark:text-emerald-400">
-                <span class="block font-semibold">Featured Episodes:</span>
-                <span class="font-extrabold text-base">${character.episode.length} episodes aired</span>
-            </div>
         `);
 
         showModal();
@@ -460,24 +255,21 @@
 
     function showErrorState(message) {
         const $cardsContainer = $('#contenedor-cards');
-        const $tableContainer = $('#contenedor-tabla-responsiva');
-
-        $tableContainer.addClass('hidden');
         $cardsContainer.removeClass('hidden').html(`
             <div class="col-span-full py-16 px-4 text-center rounded-3xl border-2 border-dashed border-slate-300 dark:border-slate-800 bg-white/40 dark:bg-slate-900/40">
                 <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center text-rose-500 text-2xl">
                     <i class="fa-solid fa-triangle-exclamation"></i>
                 </div>
-                <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-1">No Results Found</h3>
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-1">No Pokémon Found</h3>
                 <p class="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-4">${escapeHtml(message)}</p>
             </div>
         `);
-        $('#texto-resumen-resultados').text('0 results found');
+        $('#texto-resumen-resultados').text('0 Pokémon found');
     }
 
     function updatePagination(currentPage, totalPages, totalItems) {
         $('#texto-resumen-resultados').html(`
-            Showing <strong class="text-slate-900 dark:text-white">${totalItems}</strong> entries from API
+            Showing <strong class="text-slate-900 dark:text-white">${totalItems}</strong> entries from PokéAPI
         `);
         $('#texto-pagina-actual').text(`Page ${currentPage} of ${totalPages}`);
 
@@ -488,11 +280,7 @@
     // Expose UI module on global namespace
     window.AppUI = {
         renderPokemonCards,
-        renderRickCharacters,
-        renderLocationsTable,
-        renderEpisodesTable,
         openPokemonDetailModal,
-        openRickDetailModal,
         closeModal,
         showErrorState,
         updatePagination

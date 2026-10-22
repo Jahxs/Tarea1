@@ -1,25 +1,30 @@
 /**
  * =============================================================================
- * MULTIVERSE EXPLORER - API MODULE (api.js)
+ * POKÉDEX EXPLORER - API MODULE (api.js)
  * =============================================================================
- * Handles all asynchronous HTTP requests for both external APIs:
- * 1. Rick and Morty API (3 endpoints: /character, /location, /episode)
- * 2. PokéAPI with Chained 3-Endpoint "JOIN":
- *    - Step 1: GET /pokemon/{id_or_name}
- *    - Step 2: GET /pokemon-species/{id} (using species.url from Step 1)
- *    - Step 3: GET /evolution-chain/{id} (using evolution_chain.url from Step 2)
+ * Handles all asynchronous HTTP requests for PokéAPI with a Cascading
+ * 3-Endpoint "JOIN" Architecture:
+ * 
+ * 1. Step 1: GET https://pokeapi.co/api/v2/pokemon/{id_or_name}
+ *    - Base stats, artwork sprites, types, height, weight, and species URL.
+ * 2. Step 2: GET https://pokeapi.co/api/v2/pokemon-species/{id}
+ *    - Official English Pokédex lore, habitat, color, and evolution chain URL.
+ * 3. Step 3: GET https://pokeapi.co/api/v2/evolution-chain/{id}
+ *    - Recursive traversal of evolutionary stages with triggers and levels.
  * =============================================================================
  */
 
 (function (window) {
     'use strict';
 
-    const RICK_API_BASE = 'https://rickandmortyapi.com/api';
     const POKE_API_BASE = 'https://pokeapi.co/api/v2';
 
     /**
-     * Extracts numeric ID from a PokéAPI resource URL.
+     * Extracts numeric ID from a resource URL.
      * Example: "https://pokeapi.co/api/v2/pokemon-species/25/" -> 25
+     *
+     * @param {string} url - API resource URL.
+     * @returns {number|null} Extracted ID.
      */
     function extractIdFromUrl(url) {
         if (!url) return null;
@@ -28,8 +33,11 @@
     }
 
     /**
-     * Recursively traverses PokéAPI evolution chain structure
-     * into a flat array of evolution stages.
+     * Recursively traverses PokéAPI evolution tree into a flat array of stages.
+     *
+     * @param {Object} chainNode - Current node in evolution tree.
+     * @param {Array} evolutionList - Accumulated list of evolution stages.
+     * @returns {Array} Array of evolution stages with names, triggers, and sprites.
      */
     function parseEvolutionChain(chainNode, evolutionList = []) {
         if (!chainNode || !chainNode.species) return evolutionList;
@@ -71,11 +79,15 @@
     }
 
     // =========================================================================
-    // POKÉAPI - 3-ENDPOINT CHAINED "JOIN" IMPLEMENTATION
+    // PUBLIC API METHODS
     // =========================================================================
 
     /**
-     * Fetches a paginated list of basic Pokémon.
+     * Fetches a paginated page of Pokémon headers.
+     *
+     * @param {number} page - Page number (1-indexed).
+     * @param {number} limit - Items per page.
+     * @returns {Promise<Object>} Paginated response with count and results array.
      */
     async function fetchPokemonPage(page = 1, limit = 24) {
         const offset = (page - 1) * limit;
@@ -88,10 +100,10 @@
     }
 
     /**
-     * Executes chained 3-endpoint request ("JOIN" pattern):
-     * 1. GET /pokemon/{id_or_name}
-     * 2. GET /pokemon-species/{id}
-     * 3. GET /evolution-chain/{id}
+     * Executes the Cascading 3-Endpoint "JOIN" request:
+     * - Endpoint 1: /pokemon/{identifier}
+     * - Endpoint 2: /pokemon-species/{id} (chained using species.url)
+     * - Endpoint 3: /evolution-chain/{id} (chained using evolution_chain.url)
      *
      * @param {string|number} identifier - Pokémon name or ID.
      * @returns {Promise<Object>} Unified data object joining all 3 endpoints.
@@ -108,7 +120,7 @@
         }
         const pokemonData = await pokemonRes.json();
 
-        // Check if species URL is available to initiate the chain
+        // Check if species URL is present to continue the chain
         const speciesUrl = pokemonData.species && pokemonData.species.url;
         let speciesData = null;
         let evolutionChainData = null;
@@ -123,8 +135,8 @@
                 if (speciesRes.ok) {
                     speciesData = await speciesRes.json();
 
-                    // Extract English description flavor text
-                    let description = 'No Pokédex description available.';
+                    // Extract official English Pokédex description
+                    let description = 'No Pokédex description available for this Pokémon.';
                     if (Array.isArray(speciesData.flavor_text_entries)) {
                         const englishEntry = speciesData.flavor_text_entries.find(
                             entry => entry.language && entry.language.name === 'en'
@@ -146,7 +158,7 @@
                         }
                     }
 
-                    // Attach structured species info
+                    // Attach structured species information
                     pokemonData.speciesDetails = {
                         description: description,
                         habitat: speciesData.habitat ? speciesData.habitat.name : 'Unknown',
@@ -162,68 +174,27 @@
             }
         }
 
-        // Return the merged object (the "JOIN")
+        // Return the joined object
         pokemonData.evolutionChain = parsedEvolutions;
         return pokemonData;
     }
 
     /**
      * Batch-loads multiple Pokémon with primary details for the grid view.
+     *
+     * @param {Array} resultsList - Array of basic { name, url } objects.
+     * @returns {Promise<Array>} Array of detailed Pokémon objects.
      */
     async function fetchPokemonBatch(resultsList) {
         const promises = resultsList.map(item => fetch(item.url).then(r => r.json()));
         return await Promise.all(promises);
     }
 
-    // =========================================================================
-    // RICK AND MORTY API (3 Endpoints)
-    // =========================================================================
-
-    async function fetchRickCharacters(page = 1, search = '', status = '') {
-        let url = `${RICK_API_BASE}/character/?page=${page}`;
-        if (search) url += `&name=${encodeURIComponent(search)}`;
-        if (status) url += `&status=${encodeURIComponent(status)}`;
-
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`No characters found matching query (${response.status})`);
-        }
-        return await response.json();
-    }
-
-    async function fetchRickLocations(page = 1, search = '') {
-        let url = `${RICK_API_BASE}/location/?page=${page}`;
-        if (search) url += `&name=${encodeURIComponent(search)}`;
-
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`No locations found matching query (${response.status})`);
-        }
-        return await response.json();
-    }
-
-    async function fetchRickEpisodes(page = 1, search = '') {
-        let url = `${RICK_API_BASE}/episode/?page=${page}`;
-        if (search) url += `&name=${encodeURIComponent(search)}`;
-
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`No episodes found matching query (${response.status})`);
-        }
-        return await response.json();
-    }
-
     // Expose API module on global namespace
     window.AppAPI = {
-        // PokéAPI (Chained 3 Endpoints)
         fetchPokemonPage,
         fetchChainedPokemonDetails,
-        fetchPokemonBatch,
-
-        // Rick & Morty (3 Endpoints)
-        fetchRickCharacters,
-        fetchRickLocations,
-        fetchRickEpisodes
+        fetchPokemonBatch
     };
 
 })(window);

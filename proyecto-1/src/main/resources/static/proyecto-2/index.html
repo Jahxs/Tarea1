@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="es" class="h-full">
+<html lang="en" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multiverse Explorer | Rick & Morty & PokéAPI - Vanilla JS (Proyecto 2)</title>
+    <title>Pokédex Explorer | Cascading 3-Endpoint JOIN - jQuery & Modular JS (Project 2)</title>
     
-    <!-- Script preventivo de tema oscuro (FOUC) -->
+    <!-- Dark Mode FOUC Prevention Script -->
     <script>
         if (localStorage.getItem('theme-p2') === 'dark' || (!('theme-p2' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
@@ -30,11 +30,6 @@
                         sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
                     },
                     colors: {
-                        portal: {
-                            400: '#38ef7d',
-                            500: '#11998e',
-                            600: '#0c736a'
-                        },
                         poke: {
                             400: '#fbbf24',
                             500: '#ef4444',
@@ -49,76 +44,60 @@
     <!-- FontAwesome Icons (CDN) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     
-    <!-- Hoja de estilos personalizada -->
+    <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body class="min-h-full ambient-bg text-slate-800 dark:text-slate-100 font-sans antialiased flex flex-col transition-colors duration-300">
 
-    <!-- Navbar superior con Glassmorphism -->
+    <!-- Top Navigation Bar with Glassmorphism -->
     <header class="sticky top-0 z-30 backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border-b border-slate-200/80 dark:border-slate-800/80 shadow-xs transition-all">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16 sm:h-20 gap-4">
                 
-                <!-- Logo & Título -->
+                <!-- Logo & Title -->
                 <div class="flex items-center gap-3.5">
-                    <div id="brand-avatar" class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/25 ring-1 ring-white/30 transform hover:scale-105 transition-transform">
-                        <i id="brand-icon" class="fa-solid fa-atom text-white text-xl"></i>
+                    <div id="brand-avatar" class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-rose-500 to-amber-400 flex items-center justify-center shadow-lg shadow-rose-500/25 ring-1 ring-white/30 transform hover:scale-105 transition-transform">
+                        <i id="brand-icon" class="fa-solid fa-gamepad text-white text-xl"></i>
                     </div>
                     <div>
                         <div class="flex items-center gap-2">
                             <h1 class="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-                                Multiverse<span id="brand-dot" class="text-emerald-500">API</span>
+                                PokéDex<span id="brand-dot" class="text-rose-500">API</span>
                             </h1>
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20">
-                                PROYECTO 2
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-500/20">
+                                PROJECT 2
                             </span>
                         </div>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">Vanilla JS &bull; Rick & Morty (3 Endpoints) &bull; PokéAPI (2 Endpoints)</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">jQuery &bull; Modular JavaScript &bull; Cascading 3-Endpoint JOIN &bull; Debounce (4s)</p>
                     </div>
                 </div>
 
-                <!-- Selector de API Principal (Rick & Morty vs PokéAPI) -->
-                <div class="inline-flex items-center p-1 rounded-2xl bg-slate-100 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700/70 shadow-inner">
-                    <button 
-                        id="btn-api-rick" 
-                        type="button" 
-                        class="btn-api-switch active px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer shadow-sm bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400"
-                        title="Consumir Rick & Morty API (3 endpoints)"
-                    >
-                        <i class="fa-solid fa-flask"></i>
-                        <span>Rick & Morty (3 Endpoints)</span>
-                    </button>
-                    <button 
-                        id="btn-api-poke" 
-                        type="button" 
-                        class="btn-api-switch px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center gap-2 cursor-pointer"
-                        title="Consumir PokéAPI (2 endpoints)"
-                    >
-                        <i class="fa-solid fa-gamepad"></i>
-                        <span>PokéAPI (2 Endpoints)</span>
-                    </button>
+                <!-- Active Architecture Badge -->
+                <div class="hidden md:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-slate-100 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700/70 text-xs font-bold text-slate-700 dark:text-slate-300">
+                    <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                    <span>PokéAPI (3 Chained Endpoints)</span>
                 </div>
 
-                <!-- Acciones Rápidas -->
+                <!-- Quick Actions -->
                 <div class="flex items-center gap-2.5">
-                    <!-- Botón Modo Claro / Oscuro -->
+                    <!-- Light / Dark Theme Toggle Button -->
                     <button 
                         id="btn-theme-toggle" 
                         type="button" 
                         class="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-all cursor-pointer shadow-xs active:scale-95"
-                        title="Cambiar tema claro/oscuro"
+                        title="Toggle light/dark theme"
                     >
                         <i id="theme-icon" class="fa-solid fa-moon text-sm text-indigo-600 dark:text-amber-400"></i>
                     </button>
 
-                    <!-- Enlace de regreso al Proyecto 1 -->
+                    <!-- Return Link to Project 1 -->
                     <a 
                         href="../index.html" 
                         class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-all shadow-xs cursor-pointer"
-                        title="Ir al Proyecto 1 (CRUD Tareas)"
+                        title="Navigate to Project 1 (Spring Boot CRUD)"
                     >
                         <i class="fa-solid fa-arrow-left text-[11px]"></i>
-                        <span class="hidden md:inline">Proyecto 1</span>
+                        <span class="hidden md:inline">Project 1</span>
                     </a>
                 </div>
 
@@ -126,94 +105,75 @@
         </div>
     </header>
 
-    <!-- Contenido Principal -->
+    <!-- Main Content Area -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
         
-        <!-- Hero Banner Informativo con insignias de endpoints -->
+        <!-- Hero Information Banner detailing Chained 3-Endpoint Architecture -->
         <section class="hero-banner rounded-3xl p-6 sm:p-7 flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
             <div class="space-y-2 max-w-2xl">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span id="hero-badge-title">Rick and Morty API v2</span>
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
+                    <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                    <span id="hero-badge-title">Cascading REST "JOIN" Architecture</span>
                 </div>
                 <h2 id="hero-title" class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                    Explorador Multiversal de Entidades
+                    National Pokédex & Chained Endpoints
                 </h2>
                 <p id="hero-desc" class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                    Consumo asíncrono con Vanilla JS puro. Consume 3 endpoints oficiales: <strong>/character</strong> (Personajes con imagen y ficha), <strong>/location</strong> (Ubicaciones) y <strong>/episode</strong> (Episodios).
+                    Built with jQuery and modular JavaScript. Implements a cascading 3-endpoint query pattern:
+                    <strong>/pokemon</strong> (base stats & sprites) &rarr; 
+                    <strong>/pokemon-species</strong> (lore & habitat) &rarr; 
+                    <strong>/evolution-chain</strong> (full tree of evolutionary stages).
                 </p>
             </div>
 
-            <!-- Chips de estado de los endpoints consumidos -->
+            <!-- Chained Endpoint Badges -->
             <div id="endpoint-chips" class="flex flex-wrap md:flex-col gap-2 w-full md:w-auto text-xs font-semibold">
                 <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700/80 shadow-xs">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                    <span class="font-mono text-[11px] text-slate-700 dark:text-slate-300">GET /character</span>
+                    <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                    <span class="font-mono text-[11px] text-slate-700 dark:text-slate-300">1. GET /pokemon/{id}</span>
                 </div>
                 <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700/80 shadow-xs">
-                    <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-                    <span class="font-mono text-[11px] text-slate-700 dark:text-slate-300">GET /location</span>
+                    <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                    <span class="font-mono text-[11px] text-slate-700 dark:text-slate-300">2. GET /pokemon-species/{id}</span>
                 </div>
                 <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700/80 shadow-xs">
-                    <span class="w-2 h-2 rounded-full bg-purple-500"></span>
-                    <span class="font-mono text-[11px] text-slate-700 dark:text-slate-300">GET /episode</span>
+                    <span class="w-2 h-2 rounded-full bg-cyan-500"></span>
+                    <span class="font-mono text-[11px] text-slate-700 dark:text-slate-300">3. GET /evolution-chain/{id}</span>
                 </div>
             </div>
         </section>
 
-        <!-- Pestañas de Vista y Sub-Endpoints de Rick & Morty -->
-        <div id="tabs-rick-container" class="flex flex-wrap items-center justify-between gap-3 p-2 rounded-2xl bg-white/80 dark:bg-slate-900/80 border border-slate-200/90 dark:border-slate-800/80 shadow-xs backdrop-blur-md">
-            <div class="flex flex-wrap items-center gap-1.5 text-xs font-bold">
-                <button type="button" data-view="personajes" class="btn-subtab active px-4 py-2.5 rounded-xl bg-emerald-600 text-white transition-all shadow-sm cursor-pointer flex items-center gap-2">
-                    <i class="fa-solid fa-users"></i>
-                    <span>Personajes (Tarjetas)</span>
-                </button>
-                <button type="button" data-view="ubicaciones" class="btn-subtab px-4 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer flex items-center gap-2">
-                    <i class="fa-solid fa-earth-americas"></i>
-                    <span>Ubicaciones (Tabla Contenida)</span>
-                </button>
-                <button type="button" data-view="episodios" class="btn-subtab px-4 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer flex items-center gap-2">
-                    <i class="fa-solid fa-clapperboard"></i>
-                    <span>Episodios (Tabla Contenida)</span>
-                </button>
-            </div>
-
-            <div class="text-xs text-slate-500 dark:text-slate-400 px-3">
-                <span id="label-subview-info">Endpoint 1 de 3: /api/character</span>
-            </div>
-        </div>
-
-        <!-- Barra de Búsqueda con Delay de Tipeo (Debounce) y Animación de Carga de 4s -->
+        <!-- Search Bar with 4-Second Debounce & Visual Countdown Animation -->
         <section class="search-command-card p-5 sm:p-6 rounded-3xl space-y-4">
             
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-200/70 dark:border-slate-800/70">
                 <div class="flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
-                    <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
-                        Buscador Reactivo con Delay & Animación de 4s
+                    <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
+                    <span class="text-xs font-extrabold uppercase tracking-wider text-rose-600 dark:text-rose-400">
+                        Reactive Search with 4s Debounce & Throttle Protection
                     </span>
                 </div>
                 <div class="flex items-center gap-2 text-[11px] font-semibold text-slate-400">
                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
-                        <i class="fa-solid fa-clock"></i> Delay de tipeo (600ms)
+                        <i class="fa-solid fa-clock"></i> Debounce Delay (4.0s)
                     </span>
                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
-                        <i class="fa-solid fa-spinner"></i> Carga exacta de 4 segundos
+                        <i class="fa-solid fa-shield-halved"></i> Throttle Rate-Limiter
                     </span>
                 </div>
             </div>
 
-            <!-- Input de búsqueda -->
+            <!-- Search Input Controls -->
             <div class="flex flex-col md:flex-row gap-3">
                 <div class="relative flex-1">
-                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-emerald-500">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-rose-500">
                         <i class="fa-solid fa-magnifying-glass text-base"></i>
                     </div>
                     <input 
                         type="text" 
                         id="input-busqueda" 
-                        placeholder="Escribe un nombre para buscar... (ej. Rick, Morty, Pikachu, Citadel)" 
-                        class="w-full pl-11 pr-24 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-300/80 dark:border-slate-700/80 text-slate-900 dark:text-slate-100 placeholder-slate-400 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all shadow-inner"
+                        placeholder="Search Pokémon by name or ID... (e.g. pikachu, charizard, gengar, 25)" 
+                        class="w-full pl-11 pr-24 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-300/80 dark:border-slate-700/80 text-slate-900 dark:text-slate-100 placeholder-slate-400 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all shadow-inner"
                         autocomplete="off"
                     >
                     <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center gap-1.5">
@@ -221,7 +181,7 @@
                             id="btn-limpiar-busqueda" 
                             type="button" 
                             class="hidden p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors cursor-pointer"
-                            title="Limpiar búsqueda"
+                            title="Clear search input"
                         >
                             <i class="fa-solid fa-xmark text-sm"></i>
                         </button>
@@ -231,127 +191,87 @@
                     </div>
                 </div>
 
-                <!-- Filtro por Estado (Vivo / Muerto / Desconocido para Rick & Morty) -->
-                <div id="contenedor-filtro-estado" class="flex items-center gap-2">
-                    <select 
-                        id="select-filtro-estado" 
-                        class="px-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-300/80 dark:border-slate-700/80 text-xs font-bold text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer shadow-inner"
-                    >
-                        <option value="">Estado: Todos</option>
-                        <option value="alive">🟢 Vivo (Alive)</option>
-                        <option value="dead">🔴 Muerto (Dead)</option>
-                        <option value="unknown">⚪ Desconocido (Unknown)</option>
-                    </select>
-
+                <!-- Reload Button (Throttled) -->
+                <div>
                     <button 
                         id="btn-recargar-api" 
                         type="button" 
-                        class="px-4 py-3.5 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all cursor-pointer shadow-xs"
-                        title="Recargar datos de la API"
+                        class="px-5 py-3.5 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all cursor-pointer shadow-xs flex items-center gap-2"
+                        title="Reload API data (Throttled)"
                     >
-                        <i class="fa-solid fa-rotate-right mr-1.5"></i>Recargar
+                        <i class="fa-solid fa-rotate-right"></i>
+                        <span>Reload</span>
                     </button>
                 </div>
             </div>
 
-            <!-- Resumen de Resultados -->
+            <!-- Results Summary Status Bar -->
             <div class="flex flex-col sm:flex-row sm:items-center justify-between text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-200/60 dark:border-slate-800/60 gap-2">
-                <span id="texto-resumen-resultados">Cargando datos desde la API oficial...</span>
+                <span id="texto-resumen-resultados">Loading Pokémon from PokéAPI...</span>
                 <span id="texto-status-peticion" class="font-mono text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">HTTP 200 OK</span>
             </div>
 
         </section>
 
         <!-- ================================================================= -->
-        <!-- ANIMACIÓN DE CARGA DE 4 SEGUNDOS EXACTOS (REQUISITO EXPLÍCITO) -->
+        <!-- 4-SECOND DEBOUNCE COUNTDOWN ANIMATION CARD                        -->
         <!-- ================================================================= -->
-        <div id="animacion-carga-4s" class="hidden py-14 px-6 rounded-3xl text-center space-y-6 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border border-emerald-500/30 shadow-2xl animate-fade-in">
+        <div id="animacion-carga-4s" class="hidden py-14 px-6 rounded-3xl text-center space-y-6 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border border-rose-500/30 shadow-2xl animate-fade-in">
             <div class="relative w-24 h-24 mx-auto flex items-center justify-center">
-                <!-- Anillo giratorio del portal -->
-                <div class="absolute inset-0 rounded-full border-4 border-emerald-500/20 border-t-emerald-500 animate-spin"></div>
-                <div class="absolute inset-2 rounded-full border-4 border-cyan-500/20 border-b-cyan-400 animate-spin" style="animation-direction: reverse; animation-duration: 2s;"></div>
+                <!-- Rotating Ring -->
+                <div class="absolute inset-0 rounded-full border-4 border-rose-500/20 border-t-rose-500 animate-spin"></div>
+                <div class="absolute inset-2 rounded-full border-4 border-amber-500/20 border-b-amber-400 animate-spin" style="animation-direction: reverse; animation-duration: 2s;"></div>
                 
-                <!-- Contador regresivo numérico en vivo (4.0s -> 0.0s) -->
-                <span id="countdown-text" class="text-xl font-extrabold font-mono text-emerald-600 dark:text-emerald-400">4.0s</span>
+                <!-- Live Countdown Number (4.0s -> 0.0s) -->
+                <span id="countdown-text" class="text-xl font-extrabold font-mono text-rose-600 dark:text-rose-400">4.0s</span>
             </div>
 
             <div class="space-y-2 max-w-md mx-auto">
                 <h3 class="text-lg font-bold text-slate-900 dark:text-white">
-                    Ejecutando Trigger de Búsqueda
+                    Executing 4-Second Debounced Search
                 </h3>
                 <p class="text-xs text-slate-500 dark:text-slate-400">
-                    Sincronizando con la API externa... Animación requerida de <strong class="text-emerald-500">4 segundos</strong> en progreso.
+                    Waiting for user to finish typing... Reusable <strong class="text-rose-500">Debounce (4000ms)</strong> timer in progress.
                 </p>
                 
-                <!-- Barra de Progreso de 4 Segundos -->
+                <!-- Progress Bar -->
                 <div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden shadow-inner mt-4">
-                    <div id="progress-bar-4s" class="h-full bg-gradient-to-r from-emerald-500 to-cyan-400 rounded-full transition-all duration-100" style="width: 0%;"></div>
+                    <div id="progress-bar-4s" class="h-full bg-gradient-to-r from-rose-500 to-amber-400 rounded-full transition-all duration-100" style="width: 0%;"></div>
                 </div>
             </div>
         </div>
 
         <!-- ================================================================= -->
-        <!-- VISTA 1: GRID RESPONSIVO DE TARJETAS (IMAGEN Y DESCRIPCIÓN)       -->
+        <!-- RESPONSIVE CARDS GRID (3 / 4 COLUMNS)                             -->
         <!-- ================================================================= -->
         <section id="contenedor-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            <!-- Las tarjetas de personajes / Pokémon se inyectan dinámicamente -->
+            <!-- Dynamically injected cards -->
         </section>
 
-        <!-- ================================================================= -->
-        <!-- VISTA 2: NUEVA TABLA QUE NO SE SALE DE LA VISTA (CONTAINED TABLE) -->
-        <!-- ================================================================= -->
-        <section id="contenedor-tabla-responsiva" class="hidden contained-table-card rounded-3xl overflow-hidden shadow-lg border border-slate-200/90 dark:border-slate-800/80">
-            <div class="p-4 sm:p-5 border-b border-slate-200/80 dark:border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/70 dark:bg-slate-900/70">
-                <div>
-                    <h3 id="tabla-titulo-encabezado" class="text-sm font-extrabold text-slate-900 dark:text-white">
-                        Tabla Contenida sin Desbordamiento
-                    </h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">
-                        Scroll horizontal y vertical interno encapsulado. No rompe el viewport.
-                    </p>
-                </div>
-                <span id="badge-tabla-conteo" class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                    0 registros cargados
-                </span>
-            </div>
-
-            <!-- Contenedor con Scroll Encapsulado (Nunca se sale de la vista) -->
-            <div class="table-scroll-wrapper max-h-[520px] overflow-x-auto overflow-y-auto">
-                <table class="w-full text-left text-xs text-slate-700 dark:text-slate-300">
-                    <thead id="tabla-head" class="sticky top-0 z-10 bg-slate-100/95 dark:bg-slate-900/95 backdrop-blur-md uppercase tracking-wider text-[11px] font-bold text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800">
-                        <!-- Columnas dinámicas generadas según la entidad -->
-                    </thead>
-                    <tbody id="tabla-body" class="divide-y divide-slate-100 dark:divide-slate-800/80">
-                        <!-- Filas dinámicas -->
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- Paginación -->
+        <!-- Throttle-Protected Pagination Controls -->
         <div id="contenedor-paginacion" class="flex items-center justify-center gap-3 pt-4">
             <button 
                 id="btn-pag-prev" 
                 type="button" 
                 class="px-4 py-2 rounded-xl text-xs font-bold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shadow-xs"
             >
-                &larr; Anterior
+                &larr; Previous
             </button>
             <span id="texto-pagina-actual" class="text-xs font-mono font-bold text-slate-600 dark:text-slate-400">
-                Página 1 de 1
+                Page 1 of 1
             </span>
             <button 
                 id="btn-pag-next" 
                 type="button" 
                 class="px-4 py-2 rounded-xl text-xs font-bold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shadow-xs"
             >
-                Siguiente &rarr;
+                Next &rarr;
             </button>
         </div>
 
     </main>
 
-    <!-- Modal: Ficha de Detalle (Imagen y Descripción Completa) -->
+    <!-- Modal: Detail Dossier (Cascading 3-Endpoint JOIN Overlay) -->
     <div id="modal-detalle-api" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true">
         <div class="fixed inset-0 bg-slate-950/75 backdrop-blur-md transition-opacity" id="backdrop-modal"></div>
         <div class="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-16 flex items-center justify-center">
@@ -359,30 +279,30 @@
                 
                 <div class="flex items-start justify-between gap-4 border-b border-slate-100 dark:border-slate-800/80 pb-4">
                     <div>
-                        <span id="modal-badge-id" class="px-2.5 py-0.5 rounded-lg text-xs font-mono font-bold bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20">
+                        <span id="modal-badge-id" class="px-2.5 py-0.5 rounded-lg text-xs font-mono font-bold bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-500/20">
                             #00
                         </span>
-                        <h2 id="modal-titulo" class="text-2xl font-extrabold text-slate-900 dark:text-white mt-1">Nombre</h2>
+                        <h2 id="modal-titulo" class="text-2xl font-extrabold text-slate-900 dark:text-white mt-1">Name</h2>
                     </div>
-                    <button type="button" id="btn-cerrar-modal" class="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer" title="Cerrar">
+                    <button type="button" id="btn-cerrar-modal" class="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer" title="Close">
                         <i class="fa-solid fa-xmark text-lg"></i>
                     </button>
                 </div>
 
-                <!-- Imagen e Información Detallada -->
+                <!-- Detailed Visuals & Chained Specifications -->
                 <div class="space-y-4">
                     <div class="w-full h-56 sm:h-64 rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-950 flex items-center justify-center relative border border-slate-200 dark:border-slate-800">
-                        <img id="modal-imagen" src="" alt="Imagen" class="w-full h-full object-contain p-2 transition-transform duration-300 hover:scale-105">
+                        <img id="modal-imagen" src="" alt="Image" class="w-full h-full object-contain p-2 transition-transform duration-300 hover:scale-105">
                     </div>
 
                     <div id="modal-descripcion-grid" class="grid grid-cols-2 gap-3 text-xs">
-                        <!-- Especificaciones inyectadas dinámicamente -->
+                        <!-- Dynamically populated from 3 endpoints -->
                     </div>
                 </div>
 
                 <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
-                    <button type="button" id="btn-modal-entendido" class="px-5 py-2.5 rounded-xl font-bold text-xs text-white bg-emerald-600 hover:bg-emerald-500 transition-all cursor-pointer shadow-md shadow-emerald-600/25">
-                        Cerrar Ficha
+                    <button type="button" id="btn-modal-entendido" class="px-5 py-2.5 rounded-xl font-bold text-xs text-white bg-rose-600 hover:bg-rose-500 transition-all cursor-pointer shadow-md shadow-rose-600/25">
+                        Close Dossier
                     </button>
                 </div>
 
@@ -390,17 +310,23 @@
         </div>
     </div>
 
-    <!-- Toast de Notificaciones -->
-    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none max-w-sm w-full px-4"></div>
-
-    <!-- Footer con créditos -->
-    <footer class="mt-auto border-t border-slate-200/80 dark:border-slate-800/80 bg-white/70 dark:bg-slate-950/80 backdrop-blur-md py-6 text-center text-xs text-slate-500">
+    <!-- Footer with Developer Credits -->
+    <footer class="mt-auto border-t border-slate-200/80 dark:border-slate-800/80 bg-white/70 dark:bg-slate-950/80 backdrop-blur-md py-6 text-center text-xs text-slate-500 space-y-1">
         <p>
-            <strong>Proyecto 2</strong> &bull; Vanilla JavaScript &bull; Consumo Asíncrono de APIs Externas &bull; Tabla Responsiva sin Desbordamiento
+            <strong>Project 2</strong> &bull; jQuery 3.7.1 &bull; Modular JavaScript &bull; Cascading 3-Endpoint JOIN &bull; Debounce (4s) & Throttle
+        </p>
+        <p class="font-semibold text-slate-700 dark:text-slate-300">
+            Developed by: <span class="text-rose-600 dark:text-rose-400 font-bold">Jhostin Molina</span> &bull; Web Programming
         </p>
     </footer>
 
-    <!-- Lógica de la aplicación en Vanilla JS -->
-    <script src="app.js"></script>
+    <!-- 1. jQuery Library (Required Course Standard) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <!-- 2. Modular Application Architecture Scripts -->
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>

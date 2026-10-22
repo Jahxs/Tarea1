@@ -177,10 +177,12 @@ function init() {
     configurarEventos();
 }
 
-if (document.readyState === "loading") {
+// jQuery Initialization (Required Standard)
+if (typeof jQuery !== "undefined") {
+    $(document).ready(init);
+} else if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
 } else {
-    // Si el DOM ya cargó (por ejemplo scripts al final del body o recargas rápidas)
     init();
 }
 
@@ -739,29 +741,38 @@ function renderizarCards(lista) {
         }
 
         card.innerHTML = `
-            <div>
-                <div class="task-card-header">
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold ${configEstado.badgeClass}">
-                        <i class="${configEstado.icon} text-[10px]"></i>
-                        <span>${configEstado.texto}</span>
-                    </span>
-                    <div class="flex items-center gap-2">
-                        <span class="card-doc-hint text-[11px] font-semibold text-indigo-500 dark:text-indigo-400 flex items-center gap-1">
-                            <i class="fa-solid fa-file-invoice"></i> Ficha &rarr;
+            <div class="task-card-body">
+                <div>
+                    <div class="task-card-header">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold ${configEstado.badgeClass}">
+                            <i class="${configEstado.icon} text-[10px]"></i>
+                            <span>${configEstado.texto}</span>
                         </span>
-                        <span class="text-xs font-mono font-bold text-slate-400 dark:text-slate-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                            #${tarea.id}
-                        </span>
+                        <div class="flex items-center gap-2">
+                            <span class="card-doc-hint text-[11px] font-semibold text-indigo-500 dark:text-indigo-400 flex items-center gap-1">
+                                <i class="fa-solid fa-file-invoice"></i> Details &rarr;
+                            </span>
+                            <span class="text-xs font-mono font-bold text-slate-400 dark:text-slate-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                                #${tarea.id}
+                            </span>
+                        </div>
+                    </div>
+
+                    <h3 class="task-card-title text-base font-extrabold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors line-clamp-2 mt-1 leading-snug">
+                        ${escaparHTML(tarea.titulo)}
+                    </h3>
+
+                    <!-- Structured Description Section (3-Column Equal Card Layout) -->
+                    <div class="mt-2.5 p-3 rounded-xl bg-slate-50/80 dark:bg-slate-950/60 border border-slate-100 dark:border-slate-800/80 space-y-2">
+                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+                            <span><i class="fa-regular fa-file-lines mr-1 text-indigo-500"></i> Description</span>
+                            <span class="font-mono text-indigo-600 dark:text-indigo-400">${tarea.descripcion ? tarea.descripcion.length + ' chars' : 'Empty'}</span>
+                        </div>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 line-clamp-3 leading-relaxed">
+                            ${tarea.descripcion ? escaparHTML(tarea.descripcion) : '<span class="italic text-slate-400 dark:text-slate-500">No description provided</span>'}
+                        </p>
                     </div>
                 </div>
-
-                <h3 class="task-card-title text-base font-extrabold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors line-clamp-2 mt-2 leading-snug">
-                    ${escaparHTML(tarea.titulo)}
-                </h3>
-
-                <p class="text-xs text-slate-600 dark:text-slate-400 mt-2.5 line-clamp-3 leading-relaxed">
-                    ${tarea.descripcion ? escaparHTML(tarea.descripcion) : '<span class="italic text-slate-400 dark:text-slate-500">Sin descripción</span>'}
-                </p>
             </div>
 
             <div class="task-card-footer">

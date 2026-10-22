@@ -525,3 +525,54 @@ body {
 .btn-glow:hover {
     box-shadow: 0 0 25px rgba(99, 102, 241, 0.45);
 }
+
+/* ==========================================================================
+   TARJETAS EN 3 COLUMNAS DE IGUAL TAMAÑO (REQUISITO EXPLÍCITO)
+   ========================================================================== */
+#grid-tareas {
+    display: grid !important;
+    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+    gap: 1.25rem;
+    align-items: stretch;
+}
+
+@media (min-width: 640px) {
+    #grid-tareas {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+}
+
+@media (min-width: 1024px) {
+    #grid-tareas {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important; /* Exactamente 3 columnas de igual tamaño */
+    }
+}
+
+.task-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.task-card-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    justify-content: space-between;
+}
+
+.task-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    padding-top: 0.5rem;
+    border-top: 1px dashed rgba(226, 232, 240, 0.8);
+}
+
+.dark .task-card-meta {
+    border-top-color: rgba(255, 255, 255, 0.08);
+}
+

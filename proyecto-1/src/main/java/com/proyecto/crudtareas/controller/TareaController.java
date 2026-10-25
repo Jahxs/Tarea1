@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * Controlador REST: Expone los endpoints HTTP para realizar las operaciones CRUD.
- * Permite la integración con cualquier cliente web o IA mediante JSON.
+ * REST Controller: Exposes HTTP endpoints for CRUD operations.
+ * Enables integration with any web client or AI via JSON.
  */
 @RestController
 @RequestMapping("/api/tareas")
-@CrossOrigin(origins = "*") // Permite peticiones desde cualquier origen (evita problemas de CORS)
+@CrossOrigin(origins = "*") // Allows cross-origin requests from any source (prevents CORS issues)
 public class TareaController {
 
     private final TareaService tareaService;
@@ -27,7 +27,7 @@ public class TareaController {
 
     /**
      * 1. GET /api/tareas
-     * Retorna la lista completa de tareas.
+     * Returns the complete list of tasks.
      */
     @GetMapping
     public ResponseEntity<List<Tarea>> listarTodas() {
@@ -37,7 +37,7 @@ public class TareaController {
 
     /**
      * 2. GET /api/tareas/{id}
-     * Retorna una tarea específica por su ID.
+     * Returns a specific task by its ID.
      */
     @GetMapping("/{id}")
     public ResponseEntity<Tarea> obtenerPorId(@PathVariable Long id) {
@@ -48,7 +48,7 @@ public class TareaController {
 
     /**
      * 3. POST /api/tareas
-     * Crea y guarda una nueva tarea recibida en formato JSON en el cuerpo de la petición.
+     * Creates and persists a new task received in JSON format within the request body.
      */
     @PostMapping
     public ResponseEntity<Tarea> crearTarea(@RequestBody Tarea tarea) {
@@ -58,7 +58,7 @@ public class TareaController {
 
     /**
      * 4. PUT /api/tareas/{id}
-     * Actualiza los datos de una tarea existente.
+     * Updates an existing task with new data.
      */
     @PutMapping("/{id}")
     public ResponseEntity<Tarea> actualizarTarea(@PathVariable Long id, @RequestBody Tarea tarea) {
@@ -69,7 +69,7 @@ public class TareaController {
 
     /**
      * 5. DELETE /api/tareas/{id}
-     * Elimina una tarea por su ID.
+     * Deletes a task by its ID.
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarTarea(@PathVariable Long id) {

@@ -1,6 +1,6 @@
 services:
   # ==============================================================================
-  # Servicio de Base de Datos PostgreSQL 16
+  # PostgreSQL 16 Database Service
   # ==============================================================================
   db:
     image: postgres:16-alpine
@@ -24,7 +24,7 @@ services:
       - crud-network
 
   # ==============================================================================
-  # Servicio Backend / Full-Stack Spring Boot 3
+  # Spring Boot 3 Full-Stack Application Service
   # ==============================================================================
   app:
     build:
@@ -46,14 +46,14 @@ services:
       - crud-network
 
 # ==============================================================================
-# Volúmenes Persistentes
+# Persistent Volumes
 # ==============================================================================
 volumes:
   postgres_data:
     name: postgres_crud_data
 
 # ==============================================================================
-# Redes Internas
+# Internal Networks
 # ==============================================================================
 networks:
   crud-network:

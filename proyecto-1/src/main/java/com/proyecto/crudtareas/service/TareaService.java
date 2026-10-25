@@ -9,8 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Servicio de Tareas: Contiene la lógica de negocio y coordina
- * las llamadas al repositorio.
+ * Task Service: Encapsulates business logic and coordinates repository interactions.
  */
 @Service
 public class TareaService {
@@ -22,22 +21,22 @@ public class TareaService {
         this.tareaRepository = tareaRepository;
     }
 
-    // Listar todas las tareas (Read - GET all)
+    // Retrieve all tasks (Read - GET all)
     public List<Tarea> listarTodas() {
         return tareaRepository.findAll();
     }
 
-    // Obtener una tarea por su ID (Read - GET by ID)
+    // Retrieve a task by ID (Read - GET by ID)
     public Optional<Tarea> obtenerPorId(Long id) {
         return tareaRepository.findById(id);
     }
 
-    // Guardar una nueva tarea (Create - POST)
+    // Save a new task (Create - POST)
     public Tarea guardar(Tarea tarea) {
         return tareaRepository.save(tarea);
     }
 
-    // Actualizar una tarea existente (Update - PUT)
+    // Update an existing task (Update - PUT)
     public Optional<Tarea> actualizar(Long id, Tarea tareaActualizada) {
         return tareaRepository.findById(id).map(tareaExistente -> {
             tareaExistente.setTitulo(tareaActualizada.getTitulo());
@@ -47,7 +46,7 @@ public class TareaService {
         });
     }
 
-    // Eliminar una tarea por su ID (Delete - DELETE)
+    // Delete a task by ID (Delete - DELETE)
     public boolean eliminar(Long id) {
         if (tareaRepository.existsById(id)) {
             tareaRepository.deleteById(id);

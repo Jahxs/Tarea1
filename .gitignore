@@ -36,3 +36,9 @@ target/
 ### OS ###
 Thumbs.db
 .DS_Store
+
+### Environment Variables & Secrets ###
+.env
+.env.local
+.env.*.local
+!.env.example

@@ -99,3 +99,16 @@ A Postman Collection v2.1 is provided under `postman/taskhub-api-gateway.postman
 * **Automated Status Assertions:** Validates expected status codes (`200 OK` for GET/PUT, `201 Created` for POST, and `204 No Content` for DELETE).
 * **Usage Documentation:** See [`postman/README.md`](../postman/README.md) for import and execution instructions.
 
+---
+
+## 8. Nginx Reverse Proxy & Port 80 Hardening (SCRUM-8)
+
+To eliminate direct public exposure of Spring Boot on port `8080`, an Nginx reverse proxy layer is introduced on host port `80`:
+
+* **Public Ingress:** Inbound traffic from web clients and AWS API Gateway enters exclusively via Nginx on standard HTTP port `80`.
+* **Internal Routing:** Nginx forwards requests internally via Docker network `crud-network` to `http://app:8080`.
+* **Backend Isolation:** Public host port mapping for Spring Boot port `8080` is completely revoked.
+* **API Gateway Upstream Target:** The CloudFormation parameter `BackendBaseUrl` points to `http://<EC2_PUBLIC_IP>` without the `:8080` suffix.
+* **Deployment Guide:** Comprehensive procedures for EC2 deployment, Security Group rules, and verification are documented in [`docs/NGINX_REVERSE_PROXY_DEPLOYMENT.md`](./NGINX_REVERSE_PROXY_DEPLOYMENT.md).
+
+

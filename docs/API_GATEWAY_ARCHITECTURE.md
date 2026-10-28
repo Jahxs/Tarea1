@@ -51,6 +51,39 @@ All CRUD operations exposed by `com.proyecto.crudtareas.controller.TareaControll
 ## 5. Implementation Plan
 
 1. **Phase 1 (Documentation & Design):** Complete architectural baseline and endpoint mapping (SCRUM-7 Task 1).
-2. **Phase 2 (Gateway Configuration):** Define the reverse proxy service, upstream configurations, and routing rules without altering existing EC2 baseline.
-3. **Phase 3 (Testing & Validation):** Validate CRUD roundtrips through the gateway and confirm port isolation.
-4. **Phase 4 (Review & Verification):** Verify automated health checks, rate limiting, and zero regressions.
+2. **Phase 2 (Gateway Configuration):** Define the reverse proxy service, upstream configurations, and routing rules without altering existing EC2 baseline (SCRUM-7 Task 2).
+3. **Phase 3 (Proxy Routing & Parameterization):** Correct HTTP_PROXY routing for `/api/tareas` and `/api/tareas/{proxy+}`, enforce explicit backend base URL at deployment time, and validate CloudFormation template (SCRUM-7 Task 3).
+4. **Phase 4 (Testing & Verification):** Validate CRUD roundtrips through the gateway, enforce port isolation, and verify automated health checks.
+
+---
+
+## 6. CloudFormation HTTP Proxy Routing Implementation (SCRUM-7 Task 3)
+
+The AWS CloudFormation template (`infrastructure/api-gateway.yaml`) defines the Amazon API Gateway HTTP API (API Gateway v2) configured for transparent reverse proxying to the Spring Boot backend service.
+
+### 6.1 Route & Integration Mapping
+
+To ensure seamless routing to Spring Boot while avoiding routing ambiguity or missing path parameters, two dedicated HTTP_PROXY integrations and routes are configured:
+
+| Route Key | Target Integration | Upstream Integration URI | Matched Operations |
+| :--- | :--- | :--- | :--- |
+| `ANY /api/tareas` | `TareasBaseIntegration` | `${BackendBaseUrl}/api/tareas` | `GET /api/tareas` (list all)<br>`POST /api/tareas` (create task) |
+| `ANY /api/tareas/{proxy+}` | `TareasProxyIntegration` | `${BackendBaseUrl}/api/tareas/{proxy}` | `GET /api/tareas/{id}` (fetch by ID)<br>`PUT /api/tareas/{id}` (update task)<br>`DELETE /api/tareas/{id}` (delete task) |
+
+### 6.2 Request Preservation Guarantees
+
+* **HTTP Methods (`ANY`):** Both routes and integrations utilize the `ANY` method. API Gateway dynamically preserves and forwards the incoming client HTTP method (`GET`, `POST`, `PUT`, `DELETE`, `OPTIONS`) to the Spring Boot controller.
+* **Path Parameters (`{proxy+}` -> `{proxy}`):** Greedy route syntax `{proxy+}` captures single or nested path segments (such as entity IDs) and dynamically injects them into the upstream `${BackendBaseUrl}/api/tareas/{proxy}` URI, preserving Spring Boot's `@PathVariable Long id` mapping.
+* **Query String Forwarding:** API Gateway HTTP API natively forwards all incoming query parameters (e.g., `?sort=fechaCreacion,desc` or `?status=pending`) to the upstream service without requiring explicit mapping templates.
+* **Connection Type:** Both integrations explicitly specify `ConnectionType: INTERNET`, establishing standard public/routable network connectivity to the target backend instance.
+
+### 6.3 Deployment Parameterization & Security Safeguards
+
+* **Explicit Backend URL Required:** The `BackendBaseUrl` parameter requires an explicit URL at deployment time (e.g., `http://<ec2-public-ip-or-dns>:8080`). The unsafe `http://localhost:8080` default was removed to prevent loopback routing failures inside the AWS managed environment.
+* **Format Enforcement:** `AllowedPattern: ^https?://[^/]+$` ensures the URL includes `http://` or `https://` while strictly forbidding a trailing slash, preventing double-slash malformed URLs downstream.
+* **CORS Management:** Preflight requests are handled directly by the API Gateway HTTP API (`CorsConfiguration`), supporting `GET`, `POST`, `PUT`, `DELETE`, and `OPTIONS` with standard headers (`Content-Type`, `Authorization`, `X-Requested-With`).
+* **Backend Isolation:** The Spring Boot backend container continues listening on port `8080` internally on the EC2 host. Port mapping modifications and security group tightening will follow in subsequent deployment phases.
+
+### 6.4 Template Validation
+
+The CloudFormation template (`infrastructure/api-gateway.yaml`) is verified locally using `cfn-lint` against AWS CloudFormation resource schemas, confirming zero structural errors, invalid property keys, or syntax warnings.

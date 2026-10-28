@@ -56,13 +56,19 @@ Full-stack enterprise application with persistent storage, client-server REST ar
   * Real-time search (`input` event) and persistent Light / Dark mode.
 
 ### How to Run Project 1:
-* **Direct Script (Windows):** Run `iniciar_servidor.bat`.
-* **From Terminal:**
+* **Direct Script (Windows):** Run `iniciar_servidor.bat` (local dev server on port `8080`).
+* **From Terminal (Standalone):**
   ```bash
   cd proyecto-1
   .\mvnw.cmd spring-boot:run
   ```
-* **Browser Access:** [http://localhost:8080/](http://localhost:8080/).
+* **Docker Container Stack (Nginx + Spring Boot + PostgreSQL):**
+  ```bash
+  docker compose up -d --build
+  ```
+* **Production Access:** HTTP Port `80` via Nginx reverse proxy ([http://localhost/](http://localhost/)).
+* **Security Notice:** Direct public access to Spring Boot port `8080` and PostgreSQL port `5432` is revoked; traffic is routed exclusively through Nginx.
+
 
 ---
 

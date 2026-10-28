@@ -43,6 +43,23 @@ services:
     networks:
       - crud-network
 
+  # ==============================================================================
+  # Nginx Reverse Proxy Service (Port 80)
+  # ==============================================================================
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: nginx-reverse-proxy
+    restart: unless-stopped
+    ports:
+      - "${NGINX_PORT:-80}:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+    networks:
+      - crud-network
+
+
 # ==============================================================================
 # Persistent Volumes
 # ==============================================================================

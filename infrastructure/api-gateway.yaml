@@ -1,0 +1,107 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: AWS CloudFormation template defining Amazon API Gateway HTTP API for TaskHub Spring Boot backend.
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - staging
+      - prod
+    Description: Target deployment environment.
+
+  BackendBaseUrl:
+    Type: String
+    Description: Base HTTP URL of the upstream Spring Boot service (e.g., http://<ec2-ip-or-dns>:8080). Explicit backend URL is required at deployment time.
+    AllowedPattern: ^https?://[^/]+$
+    ConstraintDescription: Must be a valid HTTP or HTTPS URL without a trailing slash.
+
+Resources:
+  HttpApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: !Sub taskhub-api-gateway-${Environment}
+      Description: API Gateway HTTP API entry point for TaskHub backend
+      ProtocolType: HTTP
+      CorsConfiguration:
+        AllowOrigins:
+          - '*'
+        AllowMethods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+        AllowHeaders:
+          - Content-Type
+          - Authorization
+          - X-Requested-With
+        MaxAge: 300
+
+  # Base Collection Integration: maps /api/tareas (GET list, POST create)
+  TareasBaseIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref HttpApi
+      Description: HTTP proxy integration for base /api/tareas collection endpoint
+      IntegrationType: HTTP_PROXY
+      IntegrationMethod: ANY
+      ConnectionType: INTERNET
+      IntegrationUri: !Sub ${BackendBaseUrl}/api/tareas
+      PayloadFormatVersion: '1.0'
+
+  # Parameterized Integration: maps /api/tareas/{proxy+} (GET {id}, PUT {id}, DELETE {id})
+  TareasProxyIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref HttpApi
+      Description: HTTP proxy integration for parameterized /api/tareas/{proxy+} sub-paths
+      IntegrationType: HTTP_PROXY
+      IntegrationMethod: ANY
+      ConnectionType: INTERNET
+      IntegrationUri: !Sub ${BackendBaseUrl}/api/tareas/{proxy}
+      PayloadFormatVersion: '1.0'
+
+  # Route for base collection: matches GET /api/tareas, POST /api/tareas
+  TareasBaseRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: ANY /api/tareas
+      Target: !Sub integrations/${TareasBaseIntegration}
+
+  # Greedy route for child resources: matches GET /api/tareas/{id}, PUT /api/tareas/{id}, DELETE /api/tareas/{id}
+  TareasProxyRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: ANY /api/tareas/{proxy+}
+      Target: !Sub integrations/${TareasProxyIntegration}
+
+  DefaultStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref HttpApi
+      StageName: $default
+      AutoDeploy: true
+      Description: Default auto-deploy stage for TaskHub HTTP API
+
+Outputs:
+  ApiId:
+    Description: ID of the deployed API Gateway HTTP API
+    Value: !Ref HttpApi
+    Export:
+      Name: !Sub ${AWS::StackName}-ApiId
+
+  ApiEndpoint:
+    Description: Public invoke endpoint URL of the API Gateway
+    Value: !GetAtt HttpApi.ApiEndpoint
+    Export:
+      Name: !Sub ${AWS::StackName}-ApiEndpoint
+
+  TareasEndpoint:
+    Description: Public endpoint URL for TaskHub Tareas REST collection
+    Value: !Sub ${HttpApi.ApiEndpoint}/api/tareas
+    Export:
+      Name: !Sub ${AWS::StackName}-TareasEndpoint

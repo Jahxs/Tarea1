@@ -87,3 +87,15 @@ To ensure seamless routing to Spring Boot while avoiding routing ambiguity or mi
 ### 6.4 Template Validation
 
 The CloudFormation template (`infrastructure/api-gateway.yaml`) is verified locally using `cfn-lint` against AWS CloudFormation resource schemas, confirming zero structural errors, invalid property keys, or syntax warnings.
+
+---
+
+## 7. Postman Verification Test Suite (SCRUM-7 Task 4)
+
+A Postman Collection v2.1 is provided under `postman/taskhub-api-gateway.postman_collection.json` covering the full CRUD lifecycle against the API Gateway endpoints:
+
+* **Dynamic Base URL (`apiBaseUrl`):** Targets the deployed API Gateway endpoint (`https://<api-id>.execute-api.<region>.amazonaws.com`) or local backend without hardcoding host IP addresses or cloud resource identifiers.
+* **Chained Resource ID (`taskId`):** Captures `taskId` dynamically from `POST /api/tareas` response to drive subsequent `PUT` and `DELETE` requests sequentially.
+* **Automated Status Assertions:** Validates expected status codes (`200 OK` for GET/PUT, `201 Created` for POST, and `204 No Content` for DELETE).
+* **Usage Documentation:** See [`postman/README.md`](../postman/README.md) for import and execution instructions.
+

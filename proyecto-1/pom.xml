@@ -22,26 +22,26 @@
     </properties>
     
     <dependencies>
-        <!-- Spring Boot Starter Web: expone endpoints REST y servidor embebido Tomcat -->
+        <!-- Spring Boot Starter Web: RESTful endpoints and embedded Tomcat server -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- Spring Data JPA: mapeo objeto-relacional y operaciones CRUD automáticas -->
+        <!-- Spring Data JPA: Object-Relational Mapping and automated CRUD repositories -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- Driver PostgreSQL: conexión a la base de datos PostgreSQL -->
+        <!-- PostgreSQL Driver: database connectivity -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Starter para pruebas unitarias -->
+        <!-- Spring Boot Starter Test: unit and integration testing -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>

@@ -1,0 +1,54 @@
+# ==============================================================================
+# TaskHub - Backend-Only Container Orchestration (Docker Compose)
+# Architecture: Distributed Spring Boot Node (No Local PostgreSQL)
+# Target: Reusable across 3 EC2 Instances (Amazon Linux 2023 / t3.micro)
+# ==============================================================================
+
+services:
+  app:
+    build:
+      context: ./proyecto-1
+      dockerfile: Dockerfile
+    container_name: taskhub-backend-app
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    environment:
+      # Centralized PostgreSQL Connection (External DB Host / RDS / Master EC2)
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${DB_HOST:?DB_HOST is required}:${DB_PORT:-5432}/${DB_NAME:-crud_tareas_db}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER:?DB_USER is required}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      SERVER_PORT: 8080
+
+      # Strict JVM Memory Optimization for AWS EC2 t3.micro (1 GiB RAM)
+      JAVA_TOOL_OPTIONS: >-
+        -Xms128m
+        -Xmx200m
+        -XX:+UseSerialGC
+        -XX:MaxMetaspaceSize=96m
+        -XX:ReservedCodeCacheSize=48m
+        -Xss512k
+
+      # HikariCP Connection Pool Tuning for Distributed Instances
+      # Keeps pool small (5 connections per EC2 node) to prevent exhausting DB connections
+      SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE: ${HIKARI_MAX_POOL:-5}
+      SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE: 2
+      SPRING_DATASOURCE_HIKARI_IDLE_TIMEOUT: 300000
+      SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT: 20000
+
+    deploy:
+      resources:
+        limits:
+          # Note: 280M is an initial testing baseline for t3.micro.
+          # Subject to empirical verification under k6 load tests to prevent OOM.
+          memory: 280M
+          cpus: '0.80'
+        reservations:
+          memory: 150M
+
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/api/tareas || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s

@@ -5,8 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- * Repositorio de Tareas: Proporciona métodos CRUD listos para usar
- * (findAll, findById, save, deleteById, etc.) gracias a Spring Data JPA.
+ * Task Repository: Provides ready-to-use CRUD methods
+ * (findAll, findById, save, deleteById, etc.) powered by Spring Data JPA.
  */
 @Repository
 public interface TareaRepository extends JpaRepository<Tarea, Long> {

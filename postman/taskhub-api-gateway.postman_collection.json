@@ -1,0 +1,222 @@
+{
+  "info": {
+    "_postman_id": "c1f7b9a2-4d8e-4a62-9e23-71829d6350e4",
+    "name": "TaskHub API Gateway",
+    "description": "Integration test collection for TaskHub CRUD REST endpoints through AWS API Gateway reverse proxy.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "apiBaseUrl",
+      "value": "https://<api-id>.execute-api.<region>.amazonaws.com",
+      "type": "string",
+      "description": "Base URL of the API Gateway HTTP API or backend service without trailing slash"
+    },
+    {
+      "key": "taskId",
+      "value": "1",
+      "type": "string",
+      "description": "Identifier of the task for single-resource operations"
+    }
+  ],
+  "item": [
+    {
+      "name": "GET /api/tareas",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response body is a JSON array\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.be.an(\"array\");",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{apiBaseUrl}}/api/tareas",
+          "host": [
+            "{{apiBaseUrl}}"
+          ],
+          "path": [
+            "api",
+            "tareas"
+          ]
+        },
+        "description": "Retrieve the complete list of tasks from the database via API Gateway."
+      },
+      "response": []
+    },
+    {
+      "name": "POST /api/tareas",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 201 Created\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test(\"Response body contains created task with id\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property(\"id\");",
+              "    pm.expect(jsonData.titulo).to.eql(\"Deploy API Gateway reverse proxy\");",
+              "    pm.expect(jsonData.estado).to.eql(\"PENDIENTE\");",
+              "    ",
+              "    if (jsonData.id) {",
+              "        pm.collectionVariables.set(\"taskId\", jsonData.id.toString());",
+              "    }",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"Deploy API Gateway reverse proxy\",\n  \"descripcion\": \"Configure AWS HTTP API Gateway routes for TaskHub Spring Boot service\",\n  \"estado\": \"PENDIENTE\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{apiBaseUrl}}/api/tareas",
+          "host": [
+            "{{apiBaseUrl}}"
+          ],
+          "path": [
+            "api",
+            "tareas"
+          ]
+        },
+        "description": "Create and persist a new task in PostgreSQL via API Gateway."
+      },
+      "response": []
+    },
+    {
+      "name": "PUT /api/tareas/{{taskId}}",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response body reflects updated task values\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.titulo).to.eql(\"Deploy API Gateway reverse proxy (Updated)\");",
+              "    pm.expect(jsonData.estado).to.eql(\"EN_PROCESO\");",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"Deploy API Gateway reverse proxy (Updated)\",\n  \"descripcion\": \"Verify reverse proxy routing and execute Postman integration tests\",\n  \"estado\": \"EN_PROCESO\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{apiBaseUrl}}/api/tareas/{{taskId}}",
+          "host": [
+            "{{apiBaseUrl}}"
+          ],
+          "path": [
+            "api",
+            "tareas",
+            "{{taskId}}"
+          ]
+        },
+        "description": "Update an existing task by its ID via API Gateway."
+      },
+      "response": []
+    },
+    {
+      "name": "DELETE /api/tareas/{{taskId}}",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 204 No Content\", function () {",
+              "    pm.response.to.have.status(204);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{apiBaseUrl}}/api/tareas/{{taskId}}",
+          "host": [
+            "{{apiBaseUrl}}"
+          ],
+          "path": [
+            "api",
+            "tareas",
+            "{{taskId}}"
+          ]
+        },
+        "description": "Delete a task by its ID from the database via API Gateway."
+      },
+      "response": []
+    }
+  ]
+}
